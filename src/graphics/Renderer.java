@@ -15,6 +15,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -23,18 +24,24 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 
 
+
+
+
+import vehicles.Ship;
 import world.GameWorld;
 import world.Player;
 import controller.Camera;
 import controller.Controller;
 import entity.Quad;
 import entity.Sphere;
+import entity.Surface;
 import entity.Triangle;
 
 public class Renderer {
 	
 	private Controller controller;
 	private GameWorld gameWorld;
+	private Surface surface;
 	
 	private static double angle = 0;
 	
@@ -42,13 +49,10 @@ public class Renderer {
 	private float tileSize = 0.02f;
 	private int ceilingHeight = 10;
 	
-	
-	private static float zNear = 0.001f;
-	private static float zFar = 200f;
-
 	private List<Quad> quadList = new ArrayList<Quad>();
 	private List<Triangle> triangleList = new ArrayList<Triangle>();
 	private List<Sphere> sphereList = new ArrayList<Sphere>();
+	private List<Ship> shipList = new ArrayList<Ship>();
 
     private static long lastFPS;
 	private static int fps;
@@ -68,6 +72,7 @@ public class Renderer {
 	public Renderer(GameWorld gameWorld, Controller controller) {
 		this.gameWorld = gameWorld;
 		this.controller = controller;
+		this.surface = gameWorld.getSurface(); 
 		
 		initOpenGL(); //Initiate opengl
 		
@@ -76,10 +81,12 @@ public class Renderer {
 
 	public void updateRenderer(){
 		while(!Display.isCloseRequested()){
+			Display.setInitialBackground(0, 0, 1.0f);
 			Display.update();
 			if(vsync){
 				Display.sync(60);	//60 fps	
 			}
+			
 			controllerInput();
 			draw();
 		}
@@ -163,20 +170,45 @@ public class Renderer {
 
 		GL11.glBegin(GL11.GL_QUADS);
 		
+		
+		//Draw Surface
+		surface.drawSurface(100);
+		
+		int quadListCounter = 0;
 		//Draw all the quads
 		for(Quad q : quadList){
-			q.draw();
+			quadListCounter++;
+			if(q.getPosition().getX() > 1000 || q.getPosition().getY() > 1000 || q.getPosition().getZ() > 1000){
+				quadList.remove(quadListCounter);
+			}
+			else {
+				q.draw();
+				q.applyForce(new Vector3f(0, gameWorld.getPhysics().getGravity(), 0));
+				q.setPosition(new Vector3f(
+						q.getPosition().getX()+q.getDirection().getX(), 
+						q.getPosition().getY()+q.getDirection().getY(),
+						q.getPosition().getZ()+q.getDirection().getZ()));
+				GL11.glTranslatef(
+						q.getPosition().getX(), 
+						q.getPosition().getY(), 
+						q.getPosition().getZ());	
+			}
+			
 		}
-		
 		
 		//Draw all spheres
 		for(Sphere s : sphereList){
+			s.draw();
+			s.applyForce(new Vector3f(0, gameWorld.getPhysics().getGravity(), 0));
+		}		
+		
+		//Draw the players ship
+		for (Ship s : shipList){
 			s.draw();
 		}
 		
 		
 		GL11.glEnd();
-		
 		
 		//Draw all the triangles
 		GL11.glBegin(GL11.GL_TRIANGLES);
@@ -184,12 +216,8 @@ public class Renderer {
 			t.draw();
 		}
 		
-		
 		GL11.glEnd();
 		GL11.glPopMatrix();
-		
-		
-		
 		
 		if(printFPS){
 			updateFPS();
@@ -232,39 +260,6 @@ public class Renderer {
 	}
 	
 	
-	public void rotateCube(double x, double y, double acceleration){
-
-		
-		
-		
-		
-		if(controller.getMouseButton() == 1){
-			getAngle(1);
-			GL11.glTranslated(x, y, 0);
-			GL11.glRotated(angle, controller.getMouseDx(), 0, acceleration);
-		}
-		else if(controller.getMouseButton() == 2){
-			getAngle(-1);
-			GL11.glTranslated(x, y, 0);
-			GL11.glRotated(angle, 0, controller.getMouseDy(), acceleration);
-		}
-		else if(controller.getMouseButton() == -1){
-			GL11.glTranslated(x, y, 0);
-			GL11.glRotated(angle, 0, 0, 1.0f);
-		}
-		
-		if(controller.getMouseScroll()!=0){
-			GL11.glTranslated(0, 0, controller.getMouseScroll());
-			GL11.glRotated(angle, 0, 0, controller.getMouseScroll());
-		}
-		
-		System.out.println("Angle: " + angle);
-		
-		//GL11.glTranslated(-x, -y, 0);
-
-		
-	}
-	
 	public static double getAngle(int i){
 		if (i>0){
 			return angle += 0.15 * fps;	
@@ -275,20 +270,10 @@ public class Renderer {
 			
 		
 	}
-	
-	private Texture loadTexture(String key) {
-		try {
-			return TextureLoader.getTexture("JPG", new FileInputStream(new File("res/" + key + ".jpg")));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+	public void checkCollisions(){
 		
-		return null;
 	}
-	
-	
 	
 	public void renderSphere(float x, float y, float z){
 		GL11.glPushMatrix();
@@ -323,6 +308,7 @@ public class Renderer {
 	public void addSpheres(List<Sphere> spheres){
 		sphereList.addAll(spheres);
 	}
+	
 	
 	
 }

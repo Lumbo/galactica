@@ -47,8 +47,16 @@ public class Camera {
 		GL11.glLoadIdentity();
 		GLU.gluPerspective(fov, aspect, zNear, zFar);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glLoadIdentity();
 		
 		GL11.glEnable(GL11.GL_DEPTH);
+		
+		GL11.glEnable(GL11.GL_BLEND | GL11.GL_ALPHA | GL11.GL_PERSPECTIVE_CORRECTION_HINT);
+		
+		/*GL11.glCullFace(GL11.GL_BACK);
+		GL11.glEnable(GL11.GL_FOG);*/
+		
+		
 	}
 	
 	public void useView(){

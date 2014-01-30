@@ -22,6 +22,7 @@ public abstract class Ship {
 	
 	
 	public Ship(){
+		
 	}
 	
 	public void setName(String name){
@@ -44,6 +45,11 @@ public abstract class Ship {
 	public String getShipModel(){
 		return model;
 	}
+	
+	public void draw(){
+		
+	}
+	
 	
 	public abstract void setShipName(String s);
 	public abstract void setShipModel(String s);

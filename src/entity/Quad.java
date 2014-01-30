@@ -2,29 +2,59 @@ package entity;
 
 import java.awt.Color;
 
-import org.lwjgl.opengl.GL11;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
 
-public class Quad {
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
+
+public class Quad implements EntityInterface {
 	private double height;
 	private double width;
 	private double depth;
+	
+	private double posX;
+	private double posY;
+	private double posZ;
+	
+	private double mass;
+	
+	private Vector3f position;
+	private Vector3f direction = new Vector3f(0,0,0);
+	
 	private boolean initiated = false;
 	
 	public Quad(){
 	}
 	
 	public Quad(double height, double width, double depth){
-		createQuad(height, width, depth);
+		double randWidth = Math.random()*200;
+		double randHeight = Math.random()*100;
+		double randDepth = Math.random()*200;
+		
+		if(randWidth>100){
+			randWidth = -randWidth+100;
+		}
+		
+		if(randDepth>100){
+			randDepth = -randDepth+100;
+		}
+		
+		createQuad(height, width, depth, Math.random()*100, Math.random()*100+height, Math.random()*100);
+		setPosition((float) width/2, (float) height/2,(float) depth/2);
 	}
 	
 	public boolean isInitiated(){
 		return initiated;
 	}
 	
-	public void createQuad(double height, double width, double depth){
+	public void createQuad(double height, double width, double depth, double posX, double posY, double posZ){
 		this.height = height;
 		this.width = width; 
 		this.depth = depth;
+		
+		this.posX = posX;
+		this.posY = posY;
+		this.posZ = posZ;
 		
         initiated = true;
 	}
@@ -32,147 +62,89 @@ public class Quad {
 	public void draw(){
 		// 1
         GL11.glColor3d(1.0f,1.0f,0.0f);
-        GL11.glVertex3d( width, height,-depth);        
-        GL11.glVertex3d(-width, height,-depth);        
-        GL11.glVertex3d(-width, height, depth);
-        GL11.glVertex3d( width, height, depth);
+        GL11.glVertex3d( width+posX, height+posY,-depth+posZ);        
+        GL11.glVertex3d(-width+posX, height+posY,-depth+posZ);        
+        GL11.glVertex3d(-width+posX, height+posY, depth+posZ);
+        GL11.glVertex3d( width+posX, height+posY, depth+posZ);
         
         // 2
         GL11.glColor3f(1.0f,0.5f,0.0f);            
-        GL11.glVertex3d( width,-height, depth);
-        GL11.glVertex3d(-width,-height, depth);
-        GL11.glVertex3d(-width,-height,-depth);
-        GL11.glVertex3d( width,-height,-depth);
+        GL11.glVertex3d( width+posX,-height+posY, depth+posZ);
+        GL11.glVertex3d(-width+posX,-height+posY, depth+posZ);
+        GL11.glVertex3d(-width+posX,-height+posY,-depth+posZ);
+        GL11.glVertex3d( width+posX,-height+posY,-depth+posZ);
         
         // 3
         GL11.glColor3f(1.0f,0.0f,0.0f);
-        GL11.glVertex3d( width, height, depth);
-        GL11.glVertex3d(-width, height, depth);
-        GL11.glVertex3d(-width,-height, depth);
-        GL11.glVertex3d( width,-height, depth);
+        GL11.glVertex3d( width+posX, height+posY, depth+posZ);
+        GL11.glVertex3d(-width+posX, height+posY, depth+posZ);
+        GL11.glVertex3d(-width+posX,-height+posY, depth+posZ);
+        GL11.glVertex3d( width+posX,-height+posY, depth+posZ);
         
         // 4
         GL11.glColor3f(1.0f,1.0f,0.0f);
-        GL11.glVertex3d( width,-height,-depth);
-        GL11.glVertex3d(-width,-height,-depth);
-        GL11.glVertex3d(-width, height,-depth);
-        GL11.glVertex3d( width, height,-depth);
+        GL11.glVertex3d( width+posX,-height+posY,-depth+posZ);
+        GL11.glVertex3d(-width+posX,-height+posY,-depth+posZ);
+        GL11.glVertex3d(-width+posX, height+posY,-depth+posZ);
+        GL11.glVertex3d( width+posX, height+posY,-depth+posZ);
         
         // 5
         GL11.glColor3f(0.0f,0.0f,1.0f);
-        GL11.glVertex3d(-width, height, depth);
-        GL11.glVertex3d(-width, height,-depth);
-        GL11.glVertex3d(-width,-height,-depth);
-        GL11.glVertex3d(-width,-height, depth);
+        GL11.glVertex3d(-width+posX, height+posY, depth+posZ);
+        GL11.glVertex3d(-width+posX, height+posY,-depth+posZ);
+        GL11.glVertex3d(-width+posX,-height+posY,-depth+posZ);
+        GL11.glVertex3d(-width+posX,-height+posY, depth+posZ);
         
         // 6
         GL11.glColor3f(1.0f,0.0f,1.0f);
-        GL11.glVertex3d( width, height,-depth);
-        GL11.glVertex3d( width, height, depth);
-        GL11.glVertex3d( width,-height, depth);
-        GL11.glVertex3d( width,-height,-depth);
+        GL11.glVertex3d( width+posX, height+posY,-depth+posZ);
+        GL11.glVertex3d( width+posX, height+posY, depth+posZ);
+        GL11.glVertex3d( width+posX,-height+posY, depth+posZ);
+        GL11.glVertex3d( width+posX,-height+posY,-depth+posZ);
 	}
 	
-	
-	public void createQuad(){
-		/*if (p1 == 0.0 && p2 == 0.0 && p3 == 0.0){
-			p1 = Math.random()*100;
-			p2 = Math.random()*100;
-			p3 = Math.random()*100;
-			setColor(Math.random()*255, Math.random()*255, Math.random()*255);
-		}
-		/*System.out.println("p1 = " + p1);
-		System.out.println("p2 = " + p2);
-		System.out.println("p3 = " + p3);
-		
-		/*
-			Y|    / Z
-			 |   /
-			 |  /
-			 | /
-			 |/______ X
-		
-		//glVertex3d( X , Y , Z);
-        GL11.glVertex3f( 1.0f, 1.0f,-1.0f);          // Top Right Of The Quad (Top)
-        GL11.glVertex3f(-1.0f, 1.0f,-1.0f);          // Top Left Of The Quad (Top)
-        GL11.glVertex3f(-1.0f, 1.0f, 1.0f);          // Bottom Left Of The Quad (Top)
-        GL11.glVertex3f( 1.0f, 1.0f, 1.0f);          // Bottom Right Of The Quad (Top)
-		
-		
-		GL11.glVertex3d(p1, p1, p1);
-		GL11.glVertex3d(p1+p2, p1, p1);
-		GL11.glVertex3d(p1+p2, p1+p2, p1+p3);
-		GL11.glVertex3d(p1, p1+p2, p1+p2);
-		
-		
-		*/
-		
-		
-		for (int i=0; i<10; i++){
-			for (int j=0; j<10; j++){
-				for (int k=0; k<10; k++){
-					
-				}
-			}
-		}
-		
-		/*for (int i=0; i<6; i++){
-			GL11.glColor3f(1.0f,(float)i/6,0.0f);
-			for (int j=0; j<4; j++){
-			       GL11.glVertex3f((float)p1*10.0f, (float)p2*10.0f, (float)p3*-10.0f);        
-			       GL11.glVertex3f((float)p1*-1.0f, (float)p2*1.0f, (float)p3*-1.0f);        
-			       GL11.glVertex3f((float)p1*-1.0f, (float)p2*1.0f, (float)p3*1.0f);
-			       GL11.glVertex3f((float)p1*1.0f, (float)p2*1.0f, (float)p3*1.0f);
-			}
-		}
-			
-		// Top right		
-        GL11.glColor3f(1.0f,1.0f,0.0f);
-        GL11.glVertex3f( 1.0f, 1.0f,-1.0f);        
-        GL11.glVertex3f(-1.0f, 1.0f,-1.0f);        
-        GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-        GL11.glVertex3f( 1.0f, 1.0f, 1.0f);
-        
-        // 2
-        GL11.glColor3f(1.0f,0.5f,0.0f);            
-        GL11.glVertex3f( 1.0f,-1.0f, 1.0f);
-        GL11.glVertex3f(-1.0f,-1.0f, 1.0f);
-        GL11.glVertex3f(-1.0f,-1.0f,-1.0f);
-        GL11.glVertex3f( 1.0f,-1.0f,-1.0f);
-        
-        // 3
-        GL11.glColor3f(1.0f,0.0f,0.0f);
-        GL11.glVertex3f( 1.0f, 1.0f, 1.0f);
-        GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-        GL11.glVertex3f(-1.0f,-1.0f, 1.0f);
-        GL11.glVertex3f( 1.0f,-1.0f, 1.0f);
-        
-        // 4
-        GL11.glColor3f(1.0f,1.0f,0.0f);
-        GL11.glVertex3f( 1.0f,-1.0f,-1.0f);
-        GL11.glVertex3f(-1.0f,-1.0f,-1.0f);
-        GL11.glVertex3f(-1.0f, 1.0f,-1.0f);
-        GL11.glVertex3f( 1.0f, 1.0f,-1.0f);
-        
-        // 5
-        GL11.glColor3f(0.0f,0.0f,1.0f);
-        GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-        GL11.glVertex3f(-1.0f, 1.0f,-1.0f);
-        GL11.glVertex3f(-1.0f,-1.0f,-1.0f);
-        GL11.glVertex3f(-1.0f,-1.0f, 1.0f);
-        
-        // 6
-        GL11.glColor3f(1.0f,0.0f,1.0f);
-        GL11.glVertex3f( 1.0f, 1.0f,-1.0f);
-        GL11.glVertex3f( 1.0f, 1.0f, 1.0f);
-        GL11.glVertex3f( 1.0f,-1.0f, 1.0f);
-        GL11.glVertex3f( 1.0f,-1.0f,-1.0f);
-		*/
-
-		
-	}
 	
 	public void setColor(double r, double b, double g){
 		GL11.glColor3d(r, g, b);
+	}
+
+	@Override
+	public void applyForce(Vector3f force) {
+		direction.set(direction.getX()+force.getX(), 
+				direction.getY()+force.getY(), 
+				direction.getZ()+force.getZ());
+	}
+
+	@Override
+	public void setPosition(Vector3f position) {
+		this.position = position;
+		posX = posX + position.getX();
+		posY = posY + position.getY();
+		posZ = posZ + position.getZ();
+	}
+
+	@Override
+	public void setPosition(float x, float y, float z) {
+		setPosition(new Vector3f(x,y,z));
+	}
+
+	@Override
+	public Vector3f getPosition() {
+		return position;
+	}
+
+	@Override
+	public void setMass(double mass) {
+		this.mass = mass;		
+	}
+
+	@Override
+	public double getMass() {
+		return mass;
+	}
+
+	@Override
+	public Vector3f getDirection() {
+		return direction;
 	}
 }

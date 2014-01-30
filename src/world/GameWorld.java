@@ -8,12 +8,16 @@ import java.util.List;
 
 
 
+
+
 import org.lwjgl.util.vector.Vector3f;
 
+import physics.Physics;
 import controller.Camera;
 import controller.Controller;
 import entity.Quad;
 import entity.Sphere;
+import entity.Surface;
 import entity.Triangle;
 import graphics.Renderer;
 
@@ -30,8 +34,16 @@ import graphics.Renderer;
 public class GameWorld {
 	
 	private Controller controller;
-	private static GameWorld gameWorld;
 	private Renderer renderer;
+	private Surface surface;
+	private Physics physics;
+	
+	private static GameWorld gameWorld;
+	
+	private float worldX = 100f;
+	private float worldY = 100f;
+	private float worldZ = 100f;
+	
 	
 	private Player player;
 	
@@ -42,6 +54,8 @@ public class GameWorld {
 	private GameWorld(){
 		
 		// initiate everything that we need
+		this.physics = new Physics();
+		this.surface = new Surface();
 		this.player = new Player("Lumbo");
 		this.controller = new Controller(this); 
 		this.renderer = new Renderer(this, controller);
@@ -58,22 +72,15 @@ public class GameWorld {
 	}
 	
 	public void populateRandomSquares(){
-		/*for(int i=0; i<10; i++){
-			for(int j=0; j<10; j++){
-				for(int k=0; k<10; k++){
-					double rand = Math.random()*10;
-					quadList.add(new Quad(rand, rand, rand));
-				}
-			}
-		}*/
 		
-		for (int i=0; i<10;i++){
-			quadList.add(new Quad(10+i, 10+i, 10+i));
+		
+		
+		
+		for(int i=0; i<100;i++){
+			double rand = Math.random()*2;
+			quadList.add(new Quad(rand, rand, rand));
 		}
-		
-		double rand = Math.random()*2;
-		quadList.add(new Quad(rand, rand, rand));
-		
+			
 		renderer.addQuads(quadList);
 		
 	}
@@ -88,11 +95,52 @@ public class GameWorld {
 		
 	}
 	
+	/**************************************/
+	/*/
+	 * 		GameWorld specific shit
+	 */
+	/**************************************/
 	
-	public void generateRandomSurface(int size){
-		for(int i=0; i<size; i++){
-			
-		}
+	
+	public float getWorldX(){
+		return worldX;
+	}
+	
+	public float getWorldY(){
+		return worldY;
+	}
+	
+	public float getWorldZ(){
+		return worldZ;
+	}
+	
+	
+	
+	
+	
+	
+	/**************************************/
+	/*/
+	 * 		Surface specific shit
+	 */
+	/**************************************/
+	
+	
+	
+	public Surface getSurface(){
+		return surface;
+	}
+	
+	public void showSurface(boolean show){
+		surface.showSurface(show);
+	}
+	
+	public boolean isSurfaceVisible(){
+		return surface.isSurfaceVisible();
+	}
+	
+	public Physics getPhysics(){
+		return physics;
 	}
 	
 	
@@ -139,6 +187,8 @@ public class GameWorld {
 	public Camera getPlayerCamera(){
 		return player.getPlayerCamera();
 	}
+	
+	
 	
 	
 	

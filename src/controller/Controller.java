@@ -9,17 +9,24 @@ import world.GameWorld;
 public class Controller {
 	private GameWorld gameWorld;
 	
+	private float mouseSensitivity = 0.3f;
+	
 	public Controller(GameWorld gameWorld) {
 		 this.gameWorld = gameWorld; 
 	}
 	
 	public void keyboardPoll() {
 		while(Keyboard.next()){
+			//Spawn shit
+			//Spawn squares
 			if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
 		    	gameWorld.populateRandomSquares();
 		    }
 		    if (Keyboard.isKeyDown(Keyboard.KEY_P)){
 		    	gameWorld.populateRandomSpheres();
+		    }
+		    if (Keyboard.isKeyDown(Keyboard.KEY_INSERT)){
+		    	gameWorld.showSurface(!gameWorld.isSurfaceVisible());;
 		    }
 		}
 	    if(Keyboard.isKeyDown(Keyboard.KEY_W)){
@@ -62,16 +69,13 @@ public class Controller {
 	
 	
 	public void mousePoll(){
-		//Look over the horizontal line, x-axis
-		gameWorld.getPlayerCamera().rotateY((float)getMouseDx());
-		
-		//Look up and down, y-axis
-		gameWorld.getPlayerCamera().rotateX((float)-getMouseDy());
-		
-		if (getMouseDy()!=0){
-			System.out.println("Moving Y-wise: " + getMouseDy());
+		if(Mouse.isButtonDown(0)){
+			//Look over the horizontal line, x-axis
+			gameWorld.getPlayerCamera().rotateY((float)getMouseDx()*mouseSensitivity);
+			
+			//Look up and down, y-axis
+			gameWorld.getPlayerCamera().rotateX((float)-getMouseDy()*mouseSensitivity);			
 		}
-		
 	}
 	
 	
