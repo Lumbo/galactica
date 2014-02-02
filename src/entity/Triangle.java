@@ -50,5 +50,11 @@ public class Triangle implements EntityInterface{
 		return null;
 	}
 
+	@Override
+	public void setDirection(Vector3f direction) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

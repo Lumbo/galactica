@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 public class Surface {
 	
 	private boolean showSurface = true;
-	
+	private List<Quad> quadList = new ArrayList<Quad>();
 	
 	public Surface(){
 		
@@ -22,33 +22,32 @@ public class Surface {
 		return showSurface;
 	}
 	
-	public void drawSurface(int size){
+	public void generateSurface(int size){
+		quadList.clear();
 		if(showSurface){
-			
-		
-			//float[x][y][z] 
-			/*float[][][] surfaceGrid = new float[10][10][10];
-			for(int x=0; x<10; x++){
-				surfaceGrid[x][0][0] = 2f*x;
-				for(int y=0; y<10; y++){
-					surfaceGrid[x][y][0] = 2f*x;
-					for(int z=0; z<10; z++){
-						surfaceGrid[x][y][z] = 2f*x;		
-					}
-				}
-			}*/
-			double width = 2, height = 2, depth = 2;
+			float width = 2, height = 2, depth = 2;
 			
 			for(int i=0; i<size;i++){
-				width = i*1.1;
-				height = i;
-				depth = i*1.1;
+				width = (float) (i*1.1);
+				height = (float) -1;
+				depth = (float) (i*1.1);
 				
-				drawOne(width, -1, depth);
+				quadList.add(new Quad(-1, width, depth));
 				
-			}
-		
+				//drawOne(width, -1, depth);
+			}		
 		}
+	}
+	
+	public void drawSurface(){
+		for(Quad q : quadList){
+			q.draw();
+		}
+		
+	}
+	
+	public List<Quad> getQuads(){
+		return quadList;
 	}
 	
 	

@@ -67,6 +67,12 @@ public class Sphere extends org.lwjgl.util.glu.Sphere implements EntityInterface
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void setDirection(Vector3f direction) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 

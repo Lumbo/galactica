@@ -36,11 +36,9 @@ public class Controller {
 	        gameWorld.getPlayerCamera().moveZ(-0.2f, 1);
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-	        //gameWorld.getPlayerCamera().rotateY(-0.2f);
 	    	gameWorld.getPlayerCamera().moveZ(0.2f, 0);
 	    }
 	    else if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-	        //gameWorld.getPlayerCamera().rotateY(0.2f);
 	    	gameWorld.getPlayerCamera().moveZ(-0.2f, 0);
 	    }
 

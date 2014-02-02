@@ -1,35 +1,23 @@
 package graphics;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.LWJGLException;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-
-
-
-
-
-
-
-
 
 import vehicles.Ship;
 import world.GameWorld;
-import world.Player;
 import controller.Camera;
 import controller.Controller;
 import entity.Quad;
@@ -49,7 +37,16 @@ public class Renderer {
 	private float tileSize = 0.02f;
 	private int ceilingHeight = 10;
 	
+	//for the text
+	private static UnicodeFont font;
+	private static DecimalFormat formatter = new DecimalFormat("#.##");
+	
+	private static FloatBuffer perspectiveProjectionMatrix = BufferUtils.createFloatBuffer(16);
+	private static FloatBuffer orthographicProjectionMatrix = BufferUtils.createFloatBuffer(16); 
+	
+	
 	private List<Quad> quadList = new ArrayList<Quad>();
+	private List<Quad> surfaceQuads = new ArrayList<Quad>();
 	private List<Triangle> triangleList = new ArrayList<Triangle>();
 	private List<Sphere> sphereList = new ArrayList<Sphere>();
 	private List<Ship> shipList = new ArrayList<Ship>();
@@ -65,7 +62,7 @@ public class Renderer {
 	private double y = 0;
 	private double z = 0;
 
-	private Texture earth; 
+	private Texture earthTexture; 
 	
 	private Camera cam;
 	
@@ -78,7 +75,6 @@ public class Renderer {
 		
 	}
 	
-
 	public void updateRenderer(){
 		while(!Display.isCloseRequested()){
 			Display.setInitialBackground(0, 0, 1.0f);
@@ -96,20 +92,57 @@ public class Renderer {
 
 	
 	public void initOpenGL(){
-		/*GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		//GL11.glOrtho(-160, 160, -120, 120, zNear, zFar);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glEnable(GL11.GL_TEXTURE);
-		*/
+		setUpCamera();
+		setUpLightning();
+		setUpFonts();
 		
-		cam = gameWorld.getPlayerCamera();
+		//Set up surface
+		surface.generateSurface(100);
+		surfaceQuads.addAll(surface.getQuads());
 		
 		getDelta();
 		lastFPS = getTime();
+	}
+	
+	
+	public void setUpCamera(){
+		cam = gameWorld.getPlayerCamera();
+		
+		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, perspectiveProjectionMatrix);
+		//GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		//GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, orthographicProjectionMatrix);
+		GL11.glLoadMatrix(perspectiveProjectionMatrix);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW_MATRIX);
 		
 		
 	}
+	
+	private void setUpLightning(){
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private static void setUpFonts(){
+		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 18);
+		font = new UnicodeFont(awtFont);
+		font.getEffects().add(new ColorEffect(java.awt.Color.white));
+		font.addAsciiGlyphs();
+		try{
+			font.loadGlyphs();
+		} catch (SlickException e){
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	
 	
 	public void draw(){
 		//Clear screen buffer
@@ -124,64 +157,47 @@ public class Renderer {
 		// set quad color
 		GL11.glColor3f(0.5f, 0.5f, 1.0f);
 		
-		// draw quad
+		//print debugging text
+		/*
+		//GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadMatrix(orthographicProjectionMatrix);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glPushMatrix();
-		//x = x+controller.getMouseDx();
-		//y = y+controller.getMouseDy();
-		//rotateCube(controller.getMouseDx(), controller.getMouseDy(), 1);
+		GL11.glLoadIdentity();
+		GL11.glDisable(GL11.GL_LIGHTING);
+		font.drawString(10, 10, "Camera: [x=" + formatter.format(cam.getX()) + 
+				",y=" + formatter.format(cam.getY()) + 
+				",z=" + formatter.format(cam.getZ()) + "]");
+		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glPopMatrix();
 		
-		// draw sphere (earth or w/e)
-        //renderSphere(-2f, -0.5f, -1f);
-        
-        /*
-        GL11.glLineWidth(1000.0f);
-        
-        GL11.glBegin(GL11.GL_LINES);
-        
-        GL11.glVertex3f(0.0f, 0.0f, 0.0f);
-        GL11.glVertex3f(50.0f, 50.0f, 10.0f);
-        GL11.glEnd();
+		//GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadMatrix(perspectiveProjectionMatrix);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		*/
-        
-        
-		GL11.glTranslated(x, y, z);
-		GL11.glRotated(angle, x, y, 1);
-
-		
-		// generate grid
-		int ceilingDisplayList = GL11.glGenLists(1);
-		GL11.glNewList(ceilingDisplayList, GL11.GL_COMPILE);
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glTexCoord2f(0, 0);
-		
-		GL11.glVertex3d(-gridSize, ceilingHeight, -gridSize);
-		GL11.glTexCoord2d(gridSize*10*tileSize, 0);
-		
-		GL11.glVertex3d(gridSize, ceilingHeight, -gridSize);
-		GL11.glTexCoord2d(gridSize*10*tileSize, gridSize*10*tileSize);
-		
-		GL11.glVertex3d(gridSize, ceilingHeight, gridSize);
-		GL11.glTexCoord2d(0, gridSize*10*tileSize);
-		
-		GL11.glVertex3d(-gridSize, ceilingHeight, gridSize);
-		
-		GL11.glEnd();
-		GL11.glEndList();
-
-		GL11.glBegin(GL11.GL_QUADS);
-		
 		
 		//Draw Surface
-		surface.drawSurface(100);
+		GL11.glBegin(GL11.GL_QUADS);
+		surface.drawSurface();
 		
-		int quadListCounter = 0;
+		for(Quad q1 : quadList){
+			for(Quad q2 : surfaceQuads){
+				if(q1 != q2){
+					if(q1.isColliding(q2)){
+						System.out.println("Quad1: " + q1 + " collided with Quad 2 " + q2);
+						q1.applyForce(new Vector3f(0,0,0));
+						q1.setDirection(new Vector3f(0,0,0));
+						q1.setIsMoveable(false);
+					}
+				}
+			}
+		}
+		
+		
+		
 		//Draw all the quads
 		for(Quad q : quadList){
-			quadListCounter++;
-			if(q.getPosition().getX() > 1000 || q.getPosition().getY() > 1000 || q.getPosition().getZ() > 1000){
-				quadList.remove(quadListCounter);
-			}
-			else {
+			if(q.isMoveable()){
 				q.draw();
 				q.applyForce(new Vector3f(0, gameWorld.getPhysics().getGravity(), 0));
 				q.setPosition(new Vector3f(
@@ -191,9 +207,13 @@ public class Renderer {
 				GL11.glTranslatef(
 						q.getPosition().getX(), 
 						q.getPosition().getY(), 
-						q.getPosition().getZ());	
+						q.getPosition().getZ());
 			}
-			
+			else{
+				q.draw();
+				System.out.println("DAFUUQ");
+			}
+					
 		}
 		
 		//Draw all spheres
@@ -267,26 +287,8 @@ public class Renderer {
 		else{
 			return angle -= 0.15 * fps;
 		}
-			
-		
 	}
 
-	public void checkCollisions(){
-		
-	}
-	
-	public void renderSphere(float x, float y, float z){
-		GL11.glPushMatrix();
-		
-		GL11.glTranslated(x, y, z);
-		
-		Sphere sphere = new Sphere(50.0f, 100, 1000);
-		sphere.draw(50.0f, 100, 1000);
-		
-		GL11.glPopMatrix();
-		
-	}
-	
 	
 	public void addQuad(Quad quad){
 		quadList.add(quad);
@@ -296,13 +298,17 @@ public class Renderer {
 		quadList.addAll(quad);
 	}
 	
+	public void addSurface(List<Quad> surface){
+		surfaceQuads.addAll(surface);
+	}
+	
 	public List<Quad> getQuads(){
 		return quadList; 
 	}
 	
 	
 	public void addSphere(Sphere sphere){
-		
+		sphereList.add(sphere);
 	}
 	
 	public void addSpheres(List<Sphere> spheres){

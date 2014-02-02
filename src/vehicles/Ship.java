@@ -47,7 +47,9 @@ public abstract class Ship {
 	}
 	
 	public void draw(){
-		
+		for (Quad q : quads){
+			q.draw();
+		}
 	}
 	
 	

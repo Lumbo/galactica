@@ -1,20 +1,16 @@
 package entity;
 
-import java.awt.Color;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Quad implements EntityInterface {
-	private double height;
-	private double width;
-	private double depth;
+	private float height;
+	private float width;
+	private float depth;
 	
-	private double posX;
-	private double posY;
-	private double posZ;
+	private float posX;
+	private float posY;
+	private float posZ;
 	
 	private double mass;
 	
@@ -22,32 +18,28 @@ public class Quad implements EntityInterface {
 	private Vector3f direction = new Vector3f(0,0,0);
 	
 	private boolean initiated = false;
+	private boolean isMoveable = true;
 	
 	public Quad(){
 	}
 	
-	public Quad(double height, double width, double depth){
-		double randWidth = Math.random()*200;
-		double randHeight = Math.random()*100;
-		double randDepth = Math.random()*200;
-		
-		if(randWidth>100){
-			randWidth = -randWidth+100;
-		}
-		
-		if(randDepth>100){
-			randDepth = -randDepth+100;
-		}
-		
-		createQuad(height, width, depth, Math.random()*100, Math.random()*100+height, Math.random()*100);
-		setPosition((float) width/2, (float) height/2,(float) depth/2);
+	public Quad(float height, float width, float depth){
+		this(height, width, depth, 0,0,0);
 	}
+	
+	
+	public Quad(float height, float width, float depth, float posX, float posY, float posZ){
+		createQuad(height, width, depth, posX, posY, posZ);
+		setPosition((float) posX+width/2, (float) posY+height/2,(float) posZ+depth/2);
+	}
+	
 	
 	public boolean isInitiated(){
 		return initiated;
 	}
 	
-	public void createQuad(double height, double width, double depth, double posX, double posY, double posZ){
+	public void createQuad(float height, float width, float depth, 
+			float posX, float posY, float posZ){
 		this.height = height;
 		this.width = width; 
 		this.depth = depth;
@@ -58,6 +50,94 @@ public class Quad implements EntityInterface {
 		
         initiated = true;
 	}
+	
+	
+	
+	/**
+	 * Checks whether the argument Quad, q, collide with this Quad
+	 * @param Quad q
+	 * @return true if the two quads collide
+	 */
+	public boolean isColliding(Quad q){
+		if(isCollidingX(q) && isCollidingY(q) && isCollidingZ(q)){
+			return true;
+		}
+		
+		if(isCollidingY(q)){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean isCollidingX(Quad q){
+		//If "this" is to the left of q, the only possible collision
+		//should be "this"'s right side and q's left
+		if(this.getPosition().getX() < q.getPosition().getX()){
+			if(this.getPosition().getX()+this.getWidth()/2 > q.getPosition().getX()-q.getWidth()/2){
+				return true;
+			}	
+		}
+		else{
+			if(this.getPosition().getX()-this.getWidth()/2 < q.getPosition().getX()+q.getWidth()/2){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isCollidingY(Quad q){
+		//Check the Y-axis
+		if(this.getPosition().getY() > q.getPosition().getY()){
+			if(this.getPosition().getY()-this.getHeight()/2 <= q.getPosition().getY()+q.getHeight()/2){
+				return true;
+			}
+		}
+		else{
+			if(this.getPosition().getY()+this.getHeight()/2 >= q.getPosition().getY()-q.getHeight()/2){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isCollidingZ(Quad q){
+		//Check the Z-axis
+		if(this.getPosition().getZ() > q.getPosition().getZ()){
+			if(this.getPosition().getZ()-this.getDepth()/2 >= q.getPosition().getZ()+q.getDepth()/2){
+				return true;
+			}
+		}
+		else{
+			if(this.getPosition().getZ()+this.getDepth()/2 <= q.getPosition().getZ()-q.getDepth()/2){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	public float getWidth(){
+		return width;
+	}
+	
+	
+	public float getHeight(){
+		return height;
+	}
+	
+	public float getDepth(){
+		return depth;
+	}
+	
+	public boolean isMoveable(){
+		return isMoveable;
+	}
+	
+	public void setIsMoveable(boolean b){
+		isMoveable = b;
+	}
+	
 	
 	public void draw(){
 		// 1
@@ -146,5 +226,10 @@ public class Quad implements EntityInterface {
 	@Override
 	public Vector3f getDirection() {
 		return direction;
+	}
+
+	@Override
+	public void setDirection(Vector3f direction) {
+		this.direction = direction;
 	}
 }

@@ -72,13 +72,9 @@ public class GameWorld {
 	}
 	
 	public void populateRandomSquares(){
-		
-		
-		
-		
-		for(int i=0; i<100;i++){
-			double rand = Math.random()*2;
-			quadList.add(new Quad(rand, rand, rand));
+		for(int i=0; i<1;i++){
+			double rand = Math.random()*4;
+			quadList.add(new Quad((float) rand, (float) rand, (float) rand, 0, 2, 0));
 		}
 			
 		renderer.addQuads(quadList);
@@ -92,7 +88,6 @@ public class GameWorld {
 		}
 		
 		renderer.addSpheres(sphereList);
-		
 	}
 	
 	/**************************************/
@@ -153,6 +148,10 @@ public class GameWorld {
 	
 	public int getRenderDelta(){
 		return renderer.getDelta();
+	}
+	
+	public void addSurface(List<Quad> surfaceQuads){
+		renderer.addSurface(surfaceQuads);
 	}
 	
 	
