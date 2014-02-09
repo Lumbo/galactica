@@ -43,7 +43,6 @@ public class Surface {
 		for(Quad q : quadList){
 			q.draw();
 		}
-		
 	}
 	
 	public List<Quad> getQuads(){

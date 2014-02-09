@@ -44,7 +44,6 @@ public class GameWorld {
 	private float worldY = 100f;
 	private float worldZ = 100f;
 	
-	
 	private Player player;
 	
 	private List<Triangle> triangleList = new ArrayList<Triangle>();
@@ -60,7 +59,6 @@ public class GameWorld {
 		this.controller = new Controller(this); 
 		this.renderer = new Renderer(this, controller);
 		
-		
 		renderer.updateRenderer();
 	}
 	
@@ -74,7 +72,7 @@ public class GameWorld {
 	public void populateRandomSquares(){
 		for(int i=0; i<1;i++){
 			double rand = Math.random()*4;
-			quadList.add(new Quad((float) rand, (float) rand, (float) rand, 0, 2, 0));
+			quadList.add(new Quad((float) rand, -(float) rand, (float) rand, 0, 2, 0));
 		}
 			
 		renderer.addQuads(quadList);
@@ -84,7 +82,7 @@ public class GameWorld {
 	public void populateRandomSpheres(){
 		double rand = Math.random();
 		for (int i=0; i<100; i++){
-			sphereList.add(new Sphere((float)rand*100f, 20, 20));
+			sphereList.add(new Sphere(10f, 20, 20));
 		}
 		
 		renderer.addSpheres(sphereList);

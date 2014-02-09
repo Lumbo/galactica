@@ -27,12 +27,12 @@ public class Camera {
 	
 	public Camera(float fov, float aspect, float zNear, float zFar){
 		
-		x=0;
-		y=0;
-		z=0;
+		x=34;
+		y=-54;
+		z=33;
 		
-		rx=0;
-		ry=0;
+		rx=22;
+		ry=134;
 		rz=0;
 		
 		this.fov = fov;
@@ -90,6 +90,20 @@ public class Camera {
 		}
 	}
 	
+	public void printCameraLocation(){
+		System.out.println("Camera coords\n"
+				+ " x: " + getX() + "\n"
+				+ " y: " + getY() + "\n"
+				+ " z: " + getZ());
+	}
+	
+	public void printCameraRotation(){
+		System.out.println("Rotation coords\n"
+				 + " rx: " + getRX() + "\n"
+				 + " ry: " + getRY() + "\n"
+				 + " rz: " + getRZ());
+	}
+	
 	public float getX(){
 		return x;
 	}
@@ -100,6 +114,18 @@ public class Camera {
 	
 	public float getZ(){
 		return z;
+	}
+	
+	public float getRX(){
+		return rx;
+	}
+	
+	public float getRY(){
+		return ry;
+	}
+	
+	public float getRZ(){
+		return rz;
 	}
 	
 	

@@ -44,7 +44,6 @@ public class Renderer {
 	private static FloatBuffer perspectiveProjectionMatrix = BufferUtils.createFloatBuffer(16);
 	private static FloatBuffer orthographicProjectionMatrix = BufferUtils.createFloatBuffer(16); 
 	
-	
 	private List<Quad> quadList = new ArrayList<Quad>();
 	private List<Quad> surfaceQuads = new ArrayList<Quad>();
 	private List<Triangle> triangleList = new ArrayList<Triangle>();
@@ -93,7 +92,7 @@ public class Renderer {
 	
 	public void initOpenGL(){
 		setUpCamera();
-		setUpLightning();
+		setUpLighting();
 		setUpFonts();
 		
 		//Set up surface
@@ -119,7 +118,15 @@ public class Renderer {
 		
 	}
 	
-	private void setUpLightning(){
+	private void setUpLighting(){
+		//GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		
+		
+		GL11.glEnable(GL11.GL_LIGHT0);
+		GL11.glLightModelf(GL11.GL_LIGHT0, GL11.GL_AMBIENT);
+		
+		
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -197,6 +204,12 @@ public class Renderer {
 		
 		//Draw all the quads
 		for(Quad q : quadList){
+			System.out.println("Q1 Coord x: " + q.getPosition().getX() + 
+					", y: " + q.getPosition().getY() + 
+					", z: " + q.getPosition().getZ());
+			System.out.println("Q2 Coord x: " + q.getPosition().getX() + 
+					", y: " + q.getPosition().getY() + 
+					", z: " + q.getPosition().getZ());
 			if(q.isMoveable()){
 				q.draw();
 				q.applyForce(new Vector3f(0, gameWorld.getPhysics().getGravity(), 0));
@@ -212,8 +225,7 @@ public class Renderer {
 			else{
 				q.draw();
 				System.out.println("DAFUUQ");
-			}
-					
+			}					
 		}
 		
 		//Draw all spheres
@@ -242,6 +254,10 @@ public class Renderer {
 		if(printFPS){
 			updateFPS();
 		}
+		
+		//Print cam coords
+		cam.printCameraLocation();
+		cam.printCameraRotation();
 	}
 	
 	

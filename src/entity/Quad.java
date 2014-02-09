@@ -60,10 +60,22 @@ public class Quad implements EntityInterface {
 	 */
 	public boolean isColliding(Quad q){
 		if(isCollidingX(q) && isCollidingY(q) && isCollidingZ(q)){
+			System.out.println("Q1 Coord x: " + q.getPosition().getX() + 
+					", y: " + q.getPosition().getY() + 
+					", z: " + q.getPosition().getZ());
+			System.out.println("Q2 Coord x: " + q.getPosition().getX() + 
+					", y: " + q.getPosition().getY() + 
+					", z: " + q.getPosition().getZ());
 			return true;
 		}
 		
 		if(isCollidingY(q)){
+			System.out.println("Q1 Coord x (y): " + this.getPosition().getX() + 
+					", y: " + this.getPosition().getY() + 
+					", z: " + this.getPosition().getZ());
+			System.out.println("Q2 Coord x (y): " + q.getPosition().getX() + 
+					", y: " + q.getPosition().getY() + 
+					", z: " + q.getPosition().getZ());
 			return true;
 		}
 		
@@ -74,12 +86,12 @@ public class Quad implements EntityInterface {
 		//If "this" is to the left of q, the only possible collision
 		//should be "this"'s right side and q's left
 		if(this.getPosition().getX() < q.getPosition().getX()){
-			if(this.getPosition().getX()+this.getWidth()/2 > q.getPosition().getX()-q.getWidth()/2){
+			if(this.getPosition().getX()+this.getWidth()/2 >= q.getPosition().getX()-q.getWidth()/2){
 				return true;
 			}	
 		}
 		else{
-			if(this.getPosition().getX()-this.getWidth()/2 < q.getPosition().getX()+q.getWidth()/2){
+			if(this.getPosition().getX()-this.getWidth()/2 <= q.getPosition().getX()+q.getWidth()/2){
 				return true;
 			}
 		}
@@ -89,12 +101,12 @@ public class Quad implements EntityInterface {
 	private boolean isCollidingY(Quad q){
 		//Check the Y-axis
 		if(this.getPosition().getY() > q.getPosition().getY()){
-			if(this.getPosition().getY()-this.getHeight()/2 <= q.getPosition().getY()+q.getHeight()/2){
+			if(this.getPosition().getY()+this.getHeight()/2 >= q.getPosition().getY()-q.getHeight()/2){
 				return true;
 			}
 		}
 		else{
-			if(this.getPosition().getY()+this.getHeight()/2 >= q.getPosition().getY()-q.getHeight()/2){
+			if(this.getPosition().getY()+this.getHeight()/2 <= q.getPosition().getY()-q.getHeight()/2){
 				return true;
 			}
 		}
@@ -140,42 +152,48 @@ public class Quad implements EntityInterface {
 	
 	
 	public void draw(){
-		// 1
+		// 1 - Front
+		//GL11.glNormal3f(0, 0, 1);
         GL11.glColor3d(1.0f,1.0f,0.0f);
         GL11.glVertex3d( width+posX, height+posY,-depth+posZ);        
         GL11.glVertex3d(-width+posX, height+posY,-depth+posZ);        
         GL11.glVertex3d(-width+posX, height+posY, depth+posZ);
         GL11.glVertex3d( width+posX, height+posY, depth+posZ);
         
-        // 2
+        // 2 - Back
+        //GL11.glNormal3f(0, 0, -1);
         GL11.glColor3f(1.0f,0.5f,0.0f);            
         GL11.glVertex3d( width+posX,-height+posY, depth+posZ);
         GL11.glVertex3d(-width+posX,-height+posY, depth+posZ);
         GL11.glVertex3d(-width+posX,-height+posY,-depth+posZ);
         GL11.glVertex3d( width+posX,-height+posY,-depth+posZ);
         
-        // 3
+        // 3 - Right
+        //GL11.glNormal3f(-1, 0, 0);
         GL11.glColor3f(1.0f,0.0f,0.0f);
         GL11.glVertex3d( width+posX, height+posY, depth+posZ);
         GL11.glVertex3d(-width+posX, height+posY, depth+posZ);
         GL11.glVertex3d(-width+posX,-height+posY, depth+posZ);
         GL11.glVertex3d( width+posX,-height+posY, depth+posZ);
         
-        // 4
+        // 4 - Left
+        //GL11.glNormal3f(1, 0, 0);
         GL11.glColor3f(1.0f,1.0f,0.0f);
         GL11.glVertex3d( width+posX,-height+posY,-depth+posZ);
         GL11.glVertex3d(-width+posX,-height+posY,-depth+posZ);
         GL11.glVertex3d(-width+posX, height+posY,-depth+posZ);
         GL11.glVertex3d( width+posX, height+posY,-depth+posZ);
         
-        // 5
+        // 5 - Top
+        GL11.glNormal3f(0, 1, 0);
         GL11.glColor3f(0.0f,0.0f,1.0f);
         GL11.glVertex3d(-width+posX, height+posY, depth+posZ);
         GL11.glVertex3d(-width+posX, height+posY,-depth+posZ);
         GL11.glVertex3d(-width+posX,-height+posY,-depth+posZ);
         GL11.glVertex3d(-width+posX,-height+posY, depth+posZ);
         
-        // 6
+        // 6 - Bottom
+        //GL11.glNormal3f(0, -1, 0);
         GL11.glColor3f(1.0f,0.0f,1.0f);
         GL11.glVertex3d( width+posX, height+posY,-depth+posZ);
         GL11.glVertex3d( width+posX, height+posY, depth+posZ);
