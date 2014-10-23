@@ -72,7 +72,8 @@ public class GameWorld {
 	public void populateRandomSquares(){
 		for(int i=0; i<1;i++){
 			double rand = Math.random()*4;
-			quadList.add(new Quad((float) rand, -(float) rand, (float) rand, 0, 2, 0));
+			//quadList.add(new Quad((float) rand, -(float) rand, (float) rand, 0, 2, 0));
+			quadList.add(new Quad((float) 4, -(float) 4, (float) 4, 0, 20, 0));
 		}
 			
 		renderer.addQuads(quadList);
@@ -80,7 +81,6 @@ public class GameWorld {
 	}
 	
 	public void populateRandomSpheres(){
-		double rand = Math.random();
 		for (int i=0; i<100; i++){
 			sphereList.add(new Sphere(10f, 20, 20));
 		}

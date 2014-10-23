@@ -1,5 +1,6 @@
 package entity;
 
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Sphere extends org.lwjgl.util.glu.Sphere implements EntityInterface {
@@ -20,6 +21,7 @@ public class Sphere extends org.lwjgl.util.glu.Sphere implements EntityInterface
 	
 	public void draw(){
 		draw(radius, slices, stacks);
+		
 	}
 
 	@Override

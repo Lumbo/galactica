@@ -29,12 +29,12 @@ public class Surface {
 			
 			for(int i=0; i<size;i++){
 				width = (float) (i*1.1);
-				height = (float) -1;
+				height = (float) 1;
 				depth = (float) (i*1.1);
+				Quad q = new Quad(1, width, depth);
 				
-				quadList.add(new Quad(-1, width, depth));
-				
-				//drawOne(width, -1, depth);
+				quadList.add(q);
+				//q.setColor(r, b, g);
 			}		
 		}
 	}
@@ -55,7 +55,7 @@ public class Surface {
 		
 		
 		// 1
-		GL11.glColor3d(1.0f,0.5f,0.0f);
+		GL11.glColor3d(0.5f,0.5f,0.0f);
         GL11.glVertex3d( width, height,-depth);        
         GL11.glVertex3d(-width, height,-depth);        
         GL11.glVertex3d(-width, height, depth);

@@ -10,6 +10,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
@@ -91,9 +92,10 @@ public class Renderer {
 
 	
 	public void initOpenGL(){
-		setUpCamera();
 		setUpLighting();
 		setUpFonts();
+		setUpCamera();
+		
 		
 		//Set up surface
 		surface.generateSurface(100);
@@ -106,26 +108,24 @@ public class Renderer {
 	
 	public void setUpCamera(){
 		cam = gameWorld.getPlayerCamera();
-		
+		/*
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, perspectiveProjectionMatrix);
-		//GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		//GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, orthographicProjectionMatrix);
 		GL11.glLoadMatrix(perspectiveProjectionMatrix);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW_MATRIX);
-		
+		*/
 		
 	}
 	
 	private void setUpLighting(){
 		//GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glEnable(GL11.GL_LIGHTING);
+		//GL11.glEnable(GL11.GL_LIGHTING);
 		
-		
-		GL11.glEnable(GL11.GL_LIGHT0);
-		GL11.glLightModelf(GL11.GL_LIGHT0, GL11.GL_AMBIENT);
-		
+		//GL11.glEnable(GL11.GL_LIGHT0);
+		//GL11.glLightModelf(GL11.GL_LIGHT0, GL11.GL_AMBIENT);
 		
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -137,7 +137,7 @@ public class Renderer {
 	
 	@SuppressWarnings("unchecked")
 	private static void setUpFonts(){
-		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 18);
+		java.awt.Font awtFont = new java.awt.Font("Arial", java.awt.Font.BOLD, 18);
 		font = new UnicodeFont(awtFont);
 		font.getEffects().add(new ColorEffect(java.awt.Color.white));
 		font.addAsciiGlyphs();
@@ -161,41 +161,43 @@ public class Renderer {
 		//Use camera view
 		cam.useView();
 		
-		// set quad color
-		GL11.glColor3f(0.5f, 0.5f, 1.0f);
-		
 		//print debugging text
-		/*
-		//GL11.glMatrixMode(GL11.GL_PROJECTION);
+		/*GL11.glBegin(GL11.GL_2D);
+		//GLU.gluOrtho2D(0, Display.getWidth(), Display.getHeight(), 0);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadMatrix(orthographicProjectionMatrix);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glPushMatrix();
-		GL11.glLoadIdentity();
+		//GL11.glLoadIdentity();
 		GL11.glDisable(GL11.GL_LIGHTING);
 		font.drawString(10, 10, "Camera: [x=" + formatter.format(cam.getX()) + 
 				",y=" + formatter.format(cam.getY()) + 
 				",z=" + formatter.format(cam.getZ()) + "]");
+		font.drawString(10, 25, "Rotation: [x=" + formatter.format(cam.getRX()) + 
+				",y=" + formatter.format(cam.getRY()) + 
+				",z=" + formatter.format(cam.getRZ()) + "]");
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();
 		
-		//GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadMatrix(perspectiveProjectionMatrix);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW_MATRIX);
 		*/
 		
+		
+		
 		//Draw Surface
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glBegin(GL11.GL_QUADS);
 		surface.drawSurface();
 		
 		for(Quad q1 : quadList){
 			for(Quad q2 : surfaceQuads){
-				if(q1 != q2){
-					if(q1.isColliding(q2)){
-						System.out.println("Quad1: " + q1 + " collided with Quad 2 " + q2);
-						q1.applyForce(new Vector3f(0,0,0));
-						q1.setDirection(new Vector3f(0,0,0));
-						q1.setIsMoveable(false);
-					}
+				if(q1.isColliding(q2)){
+					System.out.println("Quad1: " + q1 + " collided with Quad 2 " + q2);
+					q1.applyForce(new Vector3f(0,0,0));
+					q1.setDirection(new Vector3f(0,0,0));
+					q1.setIsMoveable(false);
 				}
 			}
 		}
@@ -207,20 +209,14 @@ public class Renderer {
 			System.out.println("Q1 Coord x: " + q.getPosition().getX() + 
 					", y: " + q.getPosition().getY() + 
 					", z: " + q.getPosition().getZ());
-			System.out.println("Q2 Coord x: " + q.getPosition().getX() + 
-					", y: " + q.getPosition().getY() + 
-					", z: " + q.getPosition().getZ());
 			if(q.isMoveable()){
 				q.draw();
 				q.applyForce(new Vector3f(0, gameWorld.getPhysics().getGravity(), 0));
-				q.setPosition(new Vector3f(
-						q.getPosition().getX()+q.getDirection().getX(), 
-						q.getPosition().getY()+q.getDirection().getY(),
-						q.getPosition().getZ()+q.getDirection().getZ()));
 				GL11.glTranslatef(
 						q.getPosition().getX(), 
 						q.getPosition().getY(), 
 						q.getPosition().getZ());
+				System.out.println("Force: " + q.getForce());
 			}
 			else{
 				q.draw();
