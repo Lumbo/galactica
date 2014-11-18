@@ -22,7 +22,7 @@ public class Camera {
 	private float zFar;
 	
 	public Camera(){
-		this(70,(float)Display.getWidth()/(float)Display.getHeight(),0.03f,1000f);
+		this(70,(float)Display.getWidth()/(float)Display.getHeight(),0.03f,10000f);
 	}
 	
 	public Camera(float fov, float aspect, float zNear, float zFar){

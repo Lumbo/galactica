@@ -44,7 +44,7 @@ public class Renderer {
 	
 	
 	private static float zNear = 0.001f;
-	private static float zFar = 200f;
+	private static float zFar = 20000f;
 
 	private List<Quad> quadList = new ArrayList<Quad>();
 	private List<Triangle> triangleList = new ArrayList<Triangle>();
