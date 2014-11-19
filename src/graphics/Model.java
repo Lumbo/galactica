@@ -57,7 +57,7 @@ public class Model {
 		glNormalPointer(GL_FLOAT, 0, 0L);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glColor3f(0.4f, 0.27f, 0.17f);
+		glColor3f(0.7f, 0.0f, 0.0f);
 		glMaterialf(GL_FRONT, GL_SHININESS, 10f);
 		glDrawArrays(GL_TRIANGLES, 0, faces.size()*3);
 		
