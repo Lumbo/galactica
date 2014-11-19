@@ -1,15 +1,16 @@
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 import graphics.Model;
 import graphics.OBJLoader;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.Random;
-
-import org.lwjgl.input.Mouse;
+import java.nio.FloatBuffer;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.*;
 import org.lwjgl.*;
@@ -24,7 +25,18 @@ public class BjornMain {
 		} catch (LWJGLException e){
 			e.printStackTrace();
 		}
-		//init ogl
+		
+		glShadeModel(GL_SMOOTH);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.05f, 0.05f, 0.05f, 1f}));
+		glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[] {1.55f, 1.5f, 1.55f, 1f}));
+		glEnable(GL_CULL_FACE); 
+		glCullFace(GL_BACK); //Don't draw the back side of triangles
+		glEnable(GL_COLOR_MATERIAL);
+		glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -34,6 +46,7 @@ public class BjornMain {
 		float position = 0f;
 		float rotationSpeed = 0.5f;
 		float rotation = 0.0f;
+		float lightRotation = 0.0f;
 		Model m = null;
 		try{
 			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
@@ -44,7 +57,60 @@ public class BjornMain {
 		}catch (IOException e){
 			e.printStackTrace();
 		}
+		
+		int shaderProgram = glCreateProgram();
+		int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		
+		StringBuilder vertexShaderSource = new StringBuilder();
+		StringBuilder fragmentShaderSource = new StringBuilder();
+		try{
+			BufferedReader reader = new BufferedReader(new FileReader("res/shaders/shader.vert"));
+			String line;
+			while ((line = reader.readLine()) != null){
+				vertexShaderSource.append(line).append('\n');
+			}
+			System.out.println(vertexShaderSource.toString());
+			reader.close();
+		}catch (IOException e){
+			e.printStackTrace();
+			Display.destroy();
+			System.exit(1);
+		}
+		try{
+			BufferedReader reader = new BufferedReader(new FileReader("res/shaders/shader.frag"));
+			String line;
+			while ((line = reader.readLine()) != null){
+				fragmentShaderSource.append(line).append('\n');
+			}
+			System.out.println(fragmentShaderSource.toString());
+			reader.close();
+		}catch (IOException e){
+			e.printStackTrace();
+			Display.destroy();
+			System.exit(1);
+		}
+		
+		glShaderSource(vertexShader, vertexShaderSource.toString());
+		glCompileShader(vertexShader);
+		if(glGetShader(vertexShader, GL_COMPILE_STATUS) == GL_FALSE){
+			System.err.println("Vertex shader did not compile");
+		}
+		glShaderSource(fragmentShader, fragmentShaderSource.toString());
+		glCompileShader(fragmentShader);
+		if(glGetShader(fragmentShader, GL_COMPILE_STATUS) == GL_FALSE){
+			System.err.println("Vertex shader did not compile");
+		}
+		
+		glAttachShader(shaderProgram, vertexShader);
+		glAttachShader(shaderProgram, fragmentShader);
+		glLinkProgram(shaderProgram);
+		glValidateProgram(shaderProgram);
+		
+		glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{-10, 80, -10, 1}));
+		
 		while (!Display.isCloseRequested()){
+			//glUseProgram(shaderProgram);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			
@@ -82,7 +148,6 @@ public class BjornMain {
 				position -= 0.1f;
 			}
 			
-			
 			Display.update();
 			Display.sync(60);
 		}
@@ -91,5 +156,12 @@ public class BjornMain {
 	
 	public static void main(String[] args){
 		new BjornMain();
+	}
+	
+	private static FloatBuffer asFloatBuffer(float [] floats){
+		FloatBuffer res = BufferUtils.createFloatBuffer(floats.length);
+		res.put(floats);
+		res.flip();
+		return res;
 	}
 }
