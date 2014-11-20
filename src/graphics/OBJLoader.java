@@ -5,10 +5,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.util.vector.Vector3f;
 
 public class OBJLoader {
+	private static Map<String, Model> models = new HashMap<String, Model>();
+	
+	public static Model getModel(String path) throws IOException, FileNotFoundException{
+		if(!models.containsKey(path)){
+			models.put(path, loadModel(new File(path)));
+		}
+		return models.get(path);
+	}
+	
 	public static Model loadModel(File f) throws FileNotFoundException, IOException{
 		BufferedReader reader = new BufferedReader(new FileReader(f));
 		Model m = new Model();
