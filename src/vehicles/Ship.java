@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entity.Quad;
-import entity.Triangle;
 import vehicles.parts.Engine;
 
 public abstract class Ship {
 	
 	private List<Quad> quads = new ArrayList<Quad>();
-	private List<Triangle> triangles = new ArrayList<Triangle>();
 	
 	private List<Engine> engines = new ArrayList<Engine>();
 	

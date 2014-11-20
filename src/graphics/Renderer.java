@@ -71,7 +71,6 @@ import controller.Camera;
 import controller.Controller;
 import entity.Quad;
 import entity.Sphere;
-import entity.Triangle;
 
 public class Renderer {
 	
@@ -89,7 +88,6 @@ public class Renderer {
 	private static float zFar = 20000f;
 
 	private List<Quad> quadList = new ArrayList<Quad>();
-	private List<Triangle> triangleList = new ArrayList<Triangle>();
 	private List<Sphere> sphereList = new ArrayList<Sphere>();
 
     private static long lastFPS;
@@ -123,9 +121,6 @@ public class Renderer {
 	}
 	
 	public void drawNew(){
-
-		
-		
 		try{
 			Display.setDisplayMode(new DisplayMode(640, 480));
 			Display.setTitle("Bjorn");
@@ -141,7 +136,7 @@ public class Renderer {
 		glEnable(GL_LIGHT0);
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.05f, 0.5f, 0.5f, 1f}));
 		glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[] {1.55f, 1.5f, 1.55f, 1f}));
-		glEnable(GL_CULL_FACE); 
+		//glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK); //Don't draw the back side of triangles
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
@@ -151,7 +146,7 @@ public class Renderer {
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective((float) 30, 640f/480f, 0.001f, 100);
+		gluPerspective((float) 30, 1024f/768f, 0.001f, 10000);
 		glMatrixMode(GL_MODELVIEW);
 		
 		
@@ -162,7 +157,8 @@ public class Renderer {
 		Model m = null;
 		try{
 			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
-			m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
+			//m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
+			m = OBJLoader.loadModel(new File("res/models/engine/engine.obj"));
 		}catch (FileNotFoundException e){
 			e.printStackTrace();
 			System.out.println("Could not open file");
@@ -232,33 +228,42 @@ public class Renderer {
 			// Pull controller input
 			pullController();
 
-			
-			glLoadIdentity();
-
 			// Camera setting thingy
 			cam.useView();
 			
-			
+			GL11.glPushMatrix();
 			glTranslatef(0, 0, position);
 			glRotatef(rotation, 0, 1, 0);
 			
 			rotation += rotationSpeed;
 			m.draw();
+			GL11.glPopMatrix();
 			
-			
+			GL11.glPushMatrix();
 			glTranslatef(-3, 0, position);
 			glRotatef(rotation, 0, 0, 1);
 			m.draw();
+			GL11.glPopMatrix();
 			
-			
+			GL11.glPushMatrix();
 			glTranslatef(3, 0, position);
 			glRotatef(rotation, 0, 1, 1);
 			m.draw();
+			GL11.glPopMatrix();
 			
-			
+			GL11.glPushMatrix();
 			glTranslatef(0, -3, position);
 			glRotatef(rotation, 1, 1, 0);
 			m.draw();
+			GL11.glPopMatrix();
+			
+			for(int i=0; i<50; i++){
+				GL11.glPushMatrix();
+				glTranslatef((float)(Math.sin(i)*10), (float)(Math.cos(i)*10), position*i);
+				glRotatef(rotation, 1, 1, 0);
+				m.draw();
+				GL11.glPopMatrix();
+			}
 			
 
 			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
@@ -266,7 +271,7 @@ public class Renderer {
 				System.exit(0);
 			}
 			
-			glLoadIdentity();
+			
 			
 			
 			GL11.glEnd();
@@ -284,97 +289,7 @@ public class Renderer {
 	}
 
 	
-	public void draw(){
-//		//Clear screen buffer
-//		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-//		
-//		//load identify matrix
-//		GL11.glLoadIdentity();
-//		
-//		//Use camera view
-//		cam.useView();
-//		
-//		// set quad color
-//		GL11.glColor3f(0.5f, 0.5f, 1.0f);
-//		
-//		// draw quad
-//		GL11.glPushMatrix();
-//		//x = x+controller.getMouseDx();
-//		//y = y+controller.getMouseDy();
-//		//rotateCube(controller.getMouseDx(), controller.getMouseDy(), 1);
-//		
-//		// draw sphere (earth or w/e)
-//        //renderSphere(-2f, -0.5f, -1f);
-//        
-//        /*
-//        GL11.glLineWidth(1000.0f);
-//        
-//        GL11.glBegin(GL11.GL_LINES);
-//        
-//        GL11.glVertex3f(0.0f, 0.0f, 0.0f);
-//        GL11.glVertex3f(50.0f, 50.0f, 10.0f);
-//        GL11.glEnd();
-//		*/
-//        
-//        
-//		GL11.glTranslated(x, y, z);
-//		GL11.glRotated(angle, x, y, 1);
-//
-//		
-//		// generate grid
-//		int ceilingDisplayList = GL11.glGenLists(1);
-//		GL11.glNewList(ceilingDisplayList, GL11.GL_COMPILE);
-//		GL11.glBegin(GL11.GL_QUADS);
-//		GL11.glTexCoord2f(0, 0);
-//		
-//		GL11.glVertex3d(-gridSize, ceilingHeight, -gridSize);
-//		GL11.glTexCoord2d(gridSize*10*tileSize, 0);
-//		
-//		GL11.glVertex3d(gridSize, ceilingHeight, -gridSize);
-//		GL11.glTexCoord2d(gridSize*10*tileSize, gridSize*10*tileSize);
-//		
-//		GL11.glVertex3d(gridSize, ceilingHeight, gridSize);
-//		GL11.glTexCoord2d(0, gridSize*10*tileSize);
-//		
-//		GL11.glVertex3d(-gridSize, ceilingHeight, gridSize);
-//		
-//		GL11.glEnd();
-//		GL11.glEndList();
-//
-//		GL11.glBegin(GL11.GL_QUADS);
-//		
-//		//Draw all the quads
-//		for(Quad q : quadList){
-//			q.draw();
-//		}
-//		
-//		
-//		//Draw all spheres
-//		for(Sphere s : sphereList){
-//			s.draw();
-//		}
-//		
-//		
-//		GL11.glEnd();
-//		
-//		
-//		//Draw all the triangles
-//		GL11.glBegin(GL11.GL_TRIANGLES);
-//		for(Triangle t : triangleList){
-//			t.draw();
-//		}
-//		
-//		
-//		GL11.glEnd();
-//		GL11.glPopMatrix();
-//		
-//		
-//		
-//		
-//		if(printFPS){
-//			updateFPS();
-//		}
-	}
+
 	
 	
 	/**

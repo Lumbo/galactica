@@ -3,18 +3,12 @@ package world;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-
-
-
 import org.lwjgl.util.vector.Vector3f;
 
 import controller.Camera;
 import controller.Controller;
 import entity.Quad;
 import entity.Sphere;
-import entity.Triangle;
 import graphics.Renderer;
 
 /**
@@ -35,7 +29,6 @@ public class GameWorld {
 	
 	private Player player;
 	
-	private List<Triangle> triangleList = new ArrayList<Triangle>();
 	private List<Sphere> sphereList = new ArrayList<Sphere>();
 	private List<Quad> quadList = new ArrayList<Quad>();
 	
