@@ -1,5 +1,6 @@
 package controller;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -13,49 +14,61 @@ public class Controller {
 		 this.gameWorld = gameWorld; 
 	}
 	
+	public void initKeyboard(){
+		 try {
+			Keyboard.create();
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void keyboardPoll() {
-		while(Keyboard.next()){
-			if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
-		    	gameWorld.populateRandomSquares();
+		if(Keyboard.isCreated()){
+			//System.out.println(Keyboard.getEventCharacter());
+			while(Keyboard.next()){
+				if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
+			    	gameWorld.populateRandomSquares();
+			    }
+			    if (Keyboard.isKeyDown(Keyboard.KEY_P)){
+			    	gameWorld.populateRandomSpheres();
+			    }
+			}
+		    if(Keyboard.isKeyDown(Keyboard.KEY_W)){
+		    	gameWorld.getPlayerCamera().moveZ(0.2f, 1);
 		    }
-		    if (Keyboard.isKeyDown(Keyboard.KEY_P)){
-		    	gameWorld.populateRandomSpheres();
+		    else if(Keyboard.isKeyDown(Keyboard.KEY_S)){
+		        gameWorld.getPlayerCamera().moveZ(-0.2f, 1);
 		    }
-		}
-	    if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-	    	gameWorld.getPlayerCamera().moveZ(0.2f, 1);
-	    }
-	    else if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-	        gameWorld.getPlayerCamera().moveZ(-0.2f, 1);
-	    }
-	    if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-	        //gameWorld.getPlayerCamera().rotateY(-0.2f);
-	    	gameWorld.getPlayerCamera().moveZ(0.2f, 0);
-	    }
-	    else if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-	        //gameWorld.getPlayerCamera().rotateY(0.2f);
-	    	gameWorld.getPlayerCamera().moveZ(-0.2f, 0);
-	    }
-
-	    if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
-	    	gameWorld.getPlayerCamera().moveY(-0.3f);
-	    }
-	    else if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)){
-	    	gameWorld.getPlayerCamera().moveY(0.1f);
-	    }
-
-		// Arrow keys
-		else if (Keyboard.getEventKey() == Keyboard.KEY_UP){
-			
-		}
-		else if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT){
-			
-		}
-		else if (Keyboard.getEventKey() == Keyboard.KEY_DOWN){
-			
-		}
-		else if (Keyboard.getEventKey() == Keyboard.KEY_LEFT){
-			
+		    if(Keyboard.isKeyDown(Keyboard.KEY_A)){
+		        //gameWorld.getPlayerCamera().rotateY(-0.2f);
+		    	gameWorld.getPlayerCamera().moveZ(0.2f, 0);
+		    }
+		    else if(Keyboard.isKeyDown(Keyboard.KEY_D)){
+		        //gameWorld.getPlayerCamera().rotateY(0.2f);
+		    	gameWorld.getPlayerCamera().moveZ(-0.2f, 0);
+		    }
+	
+		    if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+		    	gameWorld.getPlayerCamera().moveY(-0.3f);
+		    }
+		    else if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)){
+		    	gameWorld.getPlayerCamera().moveY(0.1f);
+		    }
+	
+			// Arrow keys
+			else if (Keyboard.getEventKey() == Keyboard.KEY_UP){
+				
+			}
+			else if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT){
+				
+			}
+			else if (Keyboard.getEventKey() == Keyboard.KEY_DOWN){
+				
+			}
+			else if (Keyboard.getEventKey() == Keyboard.KEY_LEFT){
+				
+			}
 		}
 	}
 	
@@ -63,14 +76,17 @@ public class Controller {
 	
 	public void mousePoll(){
 		//Look over the horizontal line, x-axis
-		gameWorld.getPlayerCamera().rotateY((float)getMouseDx());
-		
-		//Look up and down, y-axis
-		gameWorld.getPlayerCamera().rotateX((float)-getMouseDy());
-		
-		if (getMouseDy()!=0){
-			System.out.println("Moving Y-wise: " + getMouseDy());
+		if(Mouse.isButtonDown(0)){
+			gameWorld.getPlayerCamera().rotateY((float)getMouseDx());
+			
+			//Look up and down, y-axis
+			gameWorld.getPlayerCamera().rotateX((float)-getMouseDy());
+			
+			if (getMouseDy()!=0){
+				System.out.println("Moving Y-wise: " + getMouseDy());
+			}	
 		}
+		
 		
 	}
 	

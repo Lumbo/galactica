@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 	private float x;
@@ -21,8 +22,10 @@ public class Camera {
 	private float zNear;
 	private float zFar;
 	
+	private boolean initiated = false;
+	
 	public Camera(){
-		this(70,(float)Display.getWidth()/(float)Display.getHeight(),0.03f,10000f);
+		this((float)30,(float)Display.getWidth()/(float)Display.getHeight(),0.001f,100);
 	}
 	
 	public Camera(float fov, float aspect, float zNear, float zFar){
@@ -39,7 +42,7 @@ public class Camera {
 		this.aspect = aspect;
 		this.zNear = zNear;
 		this.zFar = zFar;
-		initProjection();
+		//initProjection();
 	}
 	
 	public void initProjection(){
@@ -48,7 +51,11 @@ public class Camera {
 		GLU.gluPerspective(fov, aspect, zNear, zFar);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		
-		GL11.glEnable(GL11.GL_DEPTH);
+		initiated = true;
+	}
+	
+	public boolean isInitiated(){
+		return initiated;
 	}
 	
 	public void useView(){
@@ -80,6 +87,10 @@ public class Camera {
 		if (rx + amt < 90.0f && rx + amt > -90.0f){
 			rx += amt;
 		}
+	}
+	
+	public Vector3f getCameraPosition(){
+		return new Vector3f(x, y, z);
 	}
 	
 }

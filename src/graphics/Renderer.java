@@ -1,13 +1,59 @@
 package graphics;
 
 
+import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL11.GL_FRONT;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_SMOOTH;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColorMaterial;
+import static org.lwjgl.opengl.GL11.glCullFace;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glLightModel;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glShadeModel;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glGetShader;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glValidateProgram;
+import static org.lwjgl.util.glu.GLU.gluPerspective;
+//import BjornMain;
+
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -15,13 +61,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.newdawn.slick.opengl.GLUtils;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
-
-
-
-
-
 
 import world.GameWorld;
 import world.Player;
@@ -69,135 +111,275 @@ public class Renderer {
 		this.gameWorld = gameWorld;
 		this.controller = controller;
 		
-		initOpenGL(); //Initiate opengl
+	}
+
+	
+	public void initRenderer(){
+		cam = gameWorld.getPlayerCamera();
+		getFpsDelta();
+		lastFPS = getTime();
+		drawNew();
 		
 	}
 	
+	public void drawNew(){
 
-	public void updateRenderer(){
-		while(!Display.isCloseRequested()){
-			Display.update();
-			if(vsync){
-				Display.sync(60);	//60 fps	
-			}
-			controllerInput();
-			draw();
+		
+		
+		try{
+			Display.setDisplayMode(new DisplayMode(640, 480));
+			Display.setTitle("Bjorn");
+			Display.create();
+			System.out.println("Opengl version is " + GL11.glGetString(GL11.GL_VERSION));
+		} catch (LWJGLException e){
+			e.printStackTrace();
 		}
 		
+		glShadeModel(GL_SMOOTH);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.05f, 0.5f, 0.5f, 1f}));
+		glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[] {1.55f, 1.5f, 1.55f, 1f}));
+		glEnable(GL_CULL_FACE); 
+		glCullFace(GL_BACK); //Don't draw the back side of triangles
+		glEnable(GL_COLOR_MATERIAL);
+		glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		
+		
+		//cam.initProjection();
+		
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective((float) 30, 640f/480f, 0.001f, 100);
+		glMatrixMode(GL_MODELVIEW);
+		
+		
+		float position = -15f;
+		float rotationSpeed = 0.5f;
+		float rotation = 0.0f;
+		float lightRotation = 0.0f;
+		Model m = null;
+		try{
+			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
+			m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
+		}catch (FileNotFoundException e){
+			e.printStackTrace();
+			System.out.println("Could not open file");
+		}catch (IOException e){
+			e.printStackTrace();
+		}
+		
+		int shaderProgram = glCreateProgram();
+		int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		
+		StringBuilder vertexShaderSource = new StringBuilder();
+		StringBuilder fragmentShaderSource = new StringBuilder();
+		try{
+			BufferedReader reader = new BufferedReader(new FileReader("res/shaders/shader.vert"));
+			String line;
+			while ((line = reader.readLine()) != null){
+				vertexShaderSource.append(line).append('\n');
+			}
+			System.out.println(vertexShaderSource.toString());
+			reader.close();
+		}catch (IOException e){
+			e.printStackTrace();
+			Display.destroy();
+			System.exit(1);
+		}
+		try{
+			BufferedReader reader = new BufferedReader(new FileReader("res/shaders/shader.frag"));
+			String line;
+			while ((line = reader.readLine()) != null){
+				fragmentShaderSource.append(line).append('\n');
+			}
+			System.out.println(fragmentShaderSource.toString());
+			reader.close();
+		}catch (IOException e){
+			e.printStackTrace();
+			Display.destroy();
+			System.exit(1);
+		}
+		
+		glShaderSource(vertexShader, vertexShaderSource.toString());
+		glCompileShader(vertexShader);
+		if(glGetShader(vertexShader, GL_COMPILE_STATUS) == GL_FALSE){
+			System.err.println("Vertex shader did not compile");
+		}
+		glShaderSource(fragmentShader, fragmentShaderSource.toString());
+		glCompileShader(fragmentShader);
+		if(glGetShader(fragmentShader, GL_COMPILE_STATUS) == GL_FALSE){
+			System.err.println("Vertex shader did not compile");
+		}
+		
+		glAttachShader(shaderProgram, vertexShader);
+		glAttachShader(shaderProgram, fragmentShader);
+		glLinkProgram(shaderProgram);
+		glValidateProgram(shaderProgram);
+		
+		glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{-10, 80, -10, 1}));
+		
+		while (!Display.isCloseRequested()){
+			// Pull controller input
+			pullController();
+			
+			//glUseProgram(shaderProgram);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			
+			glLoadIdentity();
+			GL11.glPushMatrix();
+			
+			// Camera setting thingy
+			cam.useView();
+			
+			
+			
+
+			glLoadIdentity();
+			glTranslatef(0, 0, position);
+			glRotatef(rotation, 0, 1, 0);
+			
+			rotation += rotationSpeed;
+			m.draw();
+			
+			glLoadIdentity();
+			glTranslatef(-3, 0, position);
+			glRotatef(rotation, 0, 0, 1);
+			m.draw();
+			
+			glLoadIdentity();
+			glTranslatef(3, 0, position);
+			glRotatef(rotation, 0, 1, 1);
+			m.draw();
+			
+			glLoadIdentity();
+			glTranslatef(0, -3, position);
+			glRotatef(rotation, 1, 1, 0);
+			m.draw();
+			
+			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+				Display.destroy();
+				System.exit(0);
+			}
+			
+			GL11.glEnd();
+			GL11.glPopMatrix();
+			
+			Display.update();
+			Display.sync(60);
+			
+			
+			if(printFPS){
+				updateFPS();
+			}
+		}
 		Display.destroy();
 	}
 
 	
-	public void initOpenGL(){
-		/*GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		//GL11.glOrtho(-160, 160, -120, 120, zNear, zFar);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glEnable(GL11.GL_TEXTURE);
-		*/
-		
-		cam = gameWorld.getPlayerCamera();
-		
-		getDelta();
-		lastFPS = getTime();
-		
-		
-	}
-	
 	public void draw(){
-		//Clear screen buffer
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		
-		//load identify matrix
-		GL11.glLoadIdentity();
-		
-		//Use camera view
-		cam.useView();
-		
-		// set quad color
-		GL11.glColor3f(0.5f, 0.5f, 1.0f);
-		
-		// draw quad
-		GL11.glPushMatrix();
-		//x = x+controller.getMouseDx();
-		//y = y+controller.getMouseDy();
-		//rotateCube(controller.getMouseDx(), controller.getMouseDy(), 1);
-		
-		// draw sphere (earth or w/e)
-        //renderSphere(-2f, -0.5f, -1f);
-        
-        /*
-        GL11.glLineWidth(1000.0f);
-        
-        GL11.glBegin(GL11.GL_LINES);
-        
-        GL11.glVertex3f(0.0f, 0.0f, 0.0f);
-        GL11.glVertex3f(50.0f, 50.0f, 10.0f);
-        GL11.glEnd();
-		*/
-        
-        
-		GL11.glTranslated(x, y, z);
-		GL11.glRotated(angle, x, y, 1);
-
-		
-		// generate grid
-		int ceilingDisplayList = GL11.glGenLists(1);
-		GL11.glNewList(ceilingDisplayList, GL11.GL_COMPILE);
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glTexCoord2f(0, 0);
-		
-		GL11.glVertex3d(-gridSize, ceilingHeight, -gridSize);
-		GL11.glTexCoord2d(gridSize*10*tileSize, 0);
-		
-		GL11.glVertex3d(gridSize, ceilingHeight, -gridSize);
-		GL11.glTexCoord2d(gridSize*10*tileSize, gridSize*10*tileSize);
-		
-		GL11.glVertex3d(gridSize, ceilingHeight, gridSize);
-		GL11.glTexCoord2d(0, gridSize*10*tileSize);
-		
-		GL11.glVertex3d(-gridSize, ceilingHeight, gridSize);
-		
-		GL11.glEnd();
-		GL11.glEndList();
-
-		GL11.glBegin(GL11.GL_QUADS);
-		
-		//Draw all the quads
-		for(Quad q : quadList){
-			q.draw();
-		}
-		
-		
-		//Draw all spheres
-		for(Sphere s : sphereList){
-			s.draw();
-		}
-		
-		
-		GL11.glEnd();
-		
-		
-		//Draw all the triangles
-		GL11.glBegin(GL11.GL_TRIANGLES);
-		for(Triangle t : triangleList){
-			t.draw();
-		}
-		
-		
-		GL11.glEnd();
-		GL11.glPopMatrix();
-		
-		
-		
-		
-		if(printFPS){
-			updateFPS();
-		}
+//		//Clear screen buffer
+//		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+//		
+//		//load identify matrix
+//		GL11.glLoadIdentity();
+//		
+//		//Use camera view
+//		cam.useView();
+//		
+//		// set quad color
+//		GL11.glColor3f(0.5f, 0.5f, 1.0f);
+//		
+//		// draw quad
+//		GL11.glPushMatrix();
+//		//x = x+controller.getMouseDx();
+//		//y = y+controller.getMouseDy();
+//		//rotateCube(controller.getMouseDx(), controller.getMouseDy(), 1);
+//		
+//		// draw sphere (earth or w/e)
+//        //renderSphere(-2f, -0.5f, -1f);
+//        
+//        /*
+//        GL11.glLineWidth(1000.0f);
+//        
+//        GL11.glBegin(GL11.GL_LINES);
+//        
+//        GL11.glVertex3f(0.0f, 0.0f, 0.0f);
+//        GL11.glVertex3f(50.0f, 50.0f, 10.0f);
+//        GL11.glEnd();
+//		*/
+//        
+//        
+//		GL11.glTranslated(x, y, z);
+//		GL11.glRotated(angle, x, y, 1);
+//
+//		
+//		// generate grid
+//		int ceilingDisplayList = GL11.glGenLists(1);
+//		GL11.glNewList(ceilingDisplayList, GL11.GL_COMPILE);
+//		GL11.glBegin(GL11.GL_QUADS);
+//		GL11.glTexCoord2f(0, 0);
+//		
+//		GL11.glVertex3d(-gridSize, ceilingHeight, -gridSize);
+//		GL11.glTexCoord2d(gridSize*10*tileSize, 0);
+//		
+//		GL11.glVertex3d(gridSize, ceilingHeight, -gridSize);
+//		GL11.glTexCoord2d(gridSize*10*tileSize, gridSize*10*tileSize);
+//		
+//		GL11.glVertex3d(gridSize, ceilingHeight, gridSize);
+//		GL11.glTexCoord2d(0, gridSize*10*tileSize);
+//		
+//		GL11.glVertex3d(-gridSize, ceilingHeight, gridSize);
+//		
+//		GL11.glEnd();
+//		GL11.glEndList();
+//
+//		GL11.glBegin(GL11.GL_QUADS);
+//		
+//		//Draw all the quads
+//		for(Quad q : quadList){
+//			q.draw();
+//		}
+//		
+//		
+//		//Draw all spheres
+//		for(Sphere s : sphereList){
+//			s.draw();
+//		}
+//		
+//		
+//		GL11.glEnd();
+//		
+//		
+//		//Draw all the triangles
+//		GL11.glBegin(GL11.GL_TRIANGLES);
+//		for(Triangle t : triangleList){
+//			t.draw();
+//		}
+//		
+//		
+//		GL11.glEnd();
+//		GL11.glPopMatrix();
+//		
+//		
+//		
+//		
+//		if(printFPS){
+//			updateFPS();
+//		}
 	}
 	
 	
-	public int getDelta(){
+	/**
+	 * This method just figures out a delta by comparing drawn frames and adds
+	 * the FPS in the title every second or so. Uses {@link #updateFPS()} to do some updates.
+	 * 
+	 * @return
+	 */
+	public int getFpsDelta(){
 		long currentTime = getTime();
 		int delta = (int) (currentTime - lastFrame);
 		lastFrame = getTime();
@@ -206,10 +388,7 @@ public class Renderer {
 	
 	private void updateFPS(){
 		if(getTime() - lastFPS > 1000){
-			if(printFPS){
-				System.out.println("FPS: " + fps);
-			}
-			updateTitle();
+			Display.setTitle("Player " + gameWorld.getPlayerName() + " fps: " + fps);
 			fps = 0;
 			lastFPS += 1000;
 		}
@@ -220,13 +399,8 @@ public class Renderer {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
 	
-	public void updateTitle(){
-		Display.setTitle("Player " + gameWorld.getPlayerName() + " fps: " + fps);
-	}
 	
-	
-	
-	public void controllerInput(){
+	public void pullController(){
 		controller.keyboardPoll();
 		controller.mousePoll();
 	}
@@ -234,10 +408,6 @@ public class Renderer {
 	
 	public void rotateCube(double x, double y, double acceleration){
 
-		
-		
-		
-		
 		if(controller.getMouseButton() == 1){
 			getAngle(1);
 			GL11.glTranslated(x, y, 0);
@@ -324,5 +494,11 @@ public class Renderer {
 		sphereList.addAll(spheres);
 	}
 	
+	private static FloatBuffer asFloatBuffer(float [] floats){
+		FloatBuffer res = BufferUtils.createFloatBuffer(floats.length);
+		res.put(floats);
+		res.flip();
+		return res;
+	}
 	
 }

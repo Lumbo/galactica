@@ -13,14 +13,7 @@ public class MainWindow {
 	}
 	
 	public void setupDisplay(){
-		try {
-			Display.setDisplayMode(new DisplayMode(800, 600));
-			Display.create();
-			
-			
-		} catch (LWJGLException e) {
-			e.printStackTrace();
-		}
+
 	}
 	
 	public void startRendering(){

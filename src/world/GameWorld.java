@@ -42,12 +42,16 @@ public class GameWorld {
 	private GameWorld(){
 		
 		// initiate everything that we need
+		this.controller = new Controller(this);
 		this.player = new Player("Lumbo");
-		this.controller = new Controller(this); 
 		this.renderer = new Renderer(this, controller);
 		
 		
-		renderer.updateRenderer();
+		renderer.initRenderer();
+		getPlayerCamera().initProjection();
+		controller.initKeyboard();
+		System.out.println("knark");
+		
 	}
 	
 	public static GameWorld getInstance(){
@@ -58,15 +62,6 @@ public class GameWorld {
 	}
 	
 	public void populateRandomSquares(){
-		/*for(int i=0; i<10; i++){
-			for(int j=0; j<10; j++){
-				for(int k=0; k<10; k++){
-					double rand = Math.random()*10;
-					quadList.add(new Quad(rand, rand, rand));
-				}
-			}
-		}*/
-		
 		for (int i=0; i<10;i++){
 			quadList.add(new Quad(10+i, 10+i, 10+i));
 		}
@@ -104,7 +99,7 @@ public class GameWorld {
 	/**************************************/
 	
 	public int getRenderDelta(){
-		return renderer.getDelta();
+		return renderer.getFpsDelta();
 	}
 	
 	
