@@ -31,7 +31,7 @@ public class BjornMain {
 		gluPerspective((float) 30, 640f/480f, 0.001f, 100);
 		glMatrixMode(GL_MODELVIEW);
 		
-		float position = 0f;
+		float position = -15f;
 		float rotationSpeed = 0.5f;
 		float rotation = 0.0f;
 		Model m = null;
