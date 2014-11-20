@@ -222,9 +222,6 @@ public class Renderer {
 		glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{-10, 80, -10, 1}));
 		
 		while (!Display.isCloseRequested()){
-			// Pull controller input
-			pullController();
-			
 			//glUseProgram(shaderProgram);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -232,38 +229,45 @@ public class Renderer {
 			glLoadIdentity();
 			GL11.glPushMatrix();
 			
+			// Pull controller input
+			pullController();
+
+			
+			glLoadIdentity();
+
 			// Camera setting thingy
 			cam.useView();
 			
 			
-			
-
-			glLoadIdentity();
 			glTranslatef(0, 0, position);
 			glRotatef(rotation, 0, 1, 0);
 			
 			rotation += rotationSpeed;
 			m.draw();
 			
-			glLoadIdentity();
+			
 			glTranslatef(-3, 0, position);
 			glRotatef(rotation, 0, 0, 1);
 			m.draw();
 			
-			glLoadIdentity();
+			
 			glTranslatef(3, 0, position);
 			glRotatef(rotation, 0, 1, 1);
 			m.draw();
 			
-			glLoadIdentity();
+			
 			glTranslatef(0, -3, position);
 			glRotatef(rotation, 1, 1, 0);
 			m.draw();
 			
+
 			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 				Display.destroy();
 				System.exit(0);
 			}
+			
+			glLoadIdentity();
+			
 			
 			GL11.glEnd();
 			GL11.glPopMatrix();
