@@ -157,8 +157,8 @@ public class Renderer {
 		Model m = null;
 		try{
 			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
-			//m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
-			m = OBJLoader.loadModel(new File("res/models/engine/engine.obj"));
+			m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
+			//m = OBJLoader.loadModel(new File("res/models/engine/engine.obj"));
 		}catch (FileNotFoundException e){
 			e.printStackTrace();
 			System.out.println("Could not open file");
@@ -257,7 +257,7 @@ public class Renderer {
 			m.draw();
 			GL11.glPopMatrix();
 			
-			for(int i=0; i<50; i++){
+			for(int i=0; i<30; i++){
 				GL11.glPushMatrix();
 				glTranslatef((float)(Math.sin(i)*10), (float)(Math.cos(i)*10), position*i);
 				glRotatef(rotation, 1, 1, 0);

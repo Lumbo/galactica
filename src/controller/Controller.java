@@ -9,6 +9,7 @@ import world.GameWorld;
 
 public class Controller {
 	private GameWorld gameWorld;
+	private double sensitivity = 5;
 	
 	public Controller(GameWorld gameWorld) {
 		 this.gameWorld = gameWorld; 
@@ -77,10 +78,10 @@ public class Controller {
 	public void mousePoll(){
 		//Look over the horizontal line, x-axis
 		if(Mouse.isButtonDown(0)){
-			gameWorld.getPlayerCamera().rotateY((float)getMouseDx());
+			gameWorld.getPlayerCamera().rotateY((float)((getMouseDx()/30)*sensitivity));
 			
 			//Look up and down, y-axis
-			gameWorld.getPlayerCamera().rotateX((float)-getMouseDy());
+			gameWorld.getPlayerCamera().rotateX((float)-((getMouseDy()/30)*sensitivity));
 			
 			if (getMouseDy()!=0){
 				System.out.println("Moving Y-wise: " + getMouseDy());
