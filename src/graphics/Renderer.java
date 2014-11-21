@@ -256,8 +256,8 @@ public class Renderer {
 			glRotatef(rotation, 1, 1, 0);
 			m.draw();
 			GL11.glPopMatrix();
-			
-			for(int i=0; i<100; i++){
+
+			for(int i=0; i<30; i++){
 				GL11.glPushMatrix();
 				glTranslatef((float)(Math.sin(i)*10), (float)(Math.cos(i)*10), position*i);
 				glRotatef(rotation, 1, 1, 0);
