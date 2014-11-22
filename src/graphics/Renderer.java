@@ -145,14 +145,14 @@ public class Renderer {
 		//glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK); //Don't draw the back side of triangles
 		glEnable(GL_COLOR_MATERIAL);
-		glColorMaterial(GL11.GL_FRONT, GL_DIFFUSE);
+		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		
 		
 		//cam.initProjection();
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective((float) 60, Display.getWidth()/Display.getHeight(), 0.01f, 10000);
+		gluPerspective((float) 30, 1024f/768f, 0.001f, 10000);
 		glMatrixMode(GL_MODELVIEW);
 		
 		
@@ -163,7 +163,7 @@ public class Renderer {
 		float lightRotationSpeed = 1.5f;
 		Model ship = null;
 		Model surface = null;
-		BaseEntity light = null;
+		Light light = null;
 		try{
 			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
 			//m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
@@ -227,9 +227,7 @@ public class Renderer {
 		glLinkProgram(shaderProgram);
 		glValidateProgram(shaderProgram);
 		
-		//glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
-		
-		
+		glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
 		
 		// Move away from the 0,0,0 position
 		cam.moveY(-10);
@@ -248,7 +246,7 @@ public class Renderer {
 			}
 			
 			
-			//glLoadIdentity();
+			glLoadIdentity();
 			GL11.glPushMatrix();
 			
 			// Pull controller input
@@ -263,8 +261,8 @@ public class Renderer {
 			
 			for(int i=0; i<1; i++){
 				GL11.glPushMatrix();
-				GL11.glTranslatef(1, -10, position);
-				GL11.glRotatef(0, 1, 1, 0);
+				glTranslatef(1, -10, position);
+				glRotatef(0, 1, 1, 0);
 				GL11.glScalef(20, 20, 20);
 				surface.draw();
 				GL11.glPopMatrix();
@@ -272,22 +270,32 @@ public class Renderer {
 			
 			for(int i=0; i<1; i++){
 				GL11.glPushMatrix();
-				GL11.glTranslatef(1, -1, position);
-				GL11.glRotatef(0, 1, 1, 0);
+				glTranslatef(1, -1, position);
+				glRotatef(0, 1, 1, 0);
 				GL11.glScalef(2, 2, 2);
 				ship.draw();
 				GL11.glPopMatrix();
 			}
+			
+//			for(int i=0; i<1; i++){
+//				GL11.glPushMatrix();
+//				GL11.glRotatef(lightRotation, 1.0f, 1.0f, 0.5f);
+//				glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.05f, 0.5f, 10, 0.5f}));
+//				GL11.glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.1f}));
+//				GL11.glScalef(1, 1, 1);
+//				light.draw();
+//				GL11.glPopMatrix();
+//			}
+			
+			light.rotate(1, 1, 1, 1);
+			light.drawSpotLight();
+			//light.draw();
 			
 			
 			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 				Display.destroy();
 				System.exit(0);
 			}
-			
-			light.setRotationAngle(2);
-			light.rotateX(1);
-			light.draw();
 			
 			GL11.glEnd();
 			GL11.glPopMatrix();

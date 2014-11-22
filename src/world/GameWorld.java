@@ -44,7 +44,6 @@ public class GameWorld {
 		renderer.initRenderer();
 		getPlayerCamera().initProjection();
 		controller.initKeyboard();
-		System.out.println("knark");
 		
 	}
 	
