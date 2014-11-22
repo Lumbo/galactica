@@ -11,6 +11,7 @@ import java.util.Map;
 import org.lwjgl.util.vector.Vector3f;
 
 public class OBJLoader {
+	
 	private static Map<String, Model> models = new HashMap<String, Model>();
 	
 	public static Model getModel(String path) throws IOException, FileNotFoundException{

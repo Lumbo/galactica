@@ -33,14 +33,14 @@ public class BjornMain {
 		float rotation = 0.0f;
 		float lightRotation = 0.0f;
 		Model m = null;
-		try{
-			m = OBJLoader.getModel("res/models/bunny/bunny.obj");
-		}catch (FileNotFoundException e){
-			e.printStackTrace();
-			System.out.println("Could not open file");
-		}catch (IOException e){
-			e.printStackTrace();
-		}
+//		try{
+			//m = OBJLoader.getObjLoader().getModel("res/models/bunny/bunny.obj");
+//		}catch (FileNotFoundException e){
+//			e.printStackTrace();
+//			System.out.println("Could not open file");
+//		}catch (IOException e){
+//			e.printStackTrace();
+//		}
 		
 		int shaderProgram = createShader("res/shaders/shader.vert", "res/shaders/shader.frag");
 		

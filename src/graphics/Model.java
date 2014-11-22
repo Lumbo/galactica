@@ -14,8 +14,8 @@ public class Model {
 	public List<Vector3f> normals = new ArrayList<Vector3f>();
 	public List<Face> faces = new ArrayList<Face>();
 	
-	private static int vboVertexHandle;
-	private static int vboNormalHandle;
+	private int vboVertexHandle;
+	private int vboNormalHandle;
 	
 	public Model(){
 		

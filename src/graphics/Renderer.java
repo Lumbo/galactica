@@ -157,12 +157,16 @@ public class Renderer {
 		float rotation = 0.0f;
 		float lightRotation = 0.0f;
 		float lightRotationSpeed = 0.5f;
-		Model m = null;
+		Model ship = null;
+		Model surface = null;
 		try{
 			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
 			//m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
 			//m = OBJLoader.loadModel(new File("res/models/engine/engine.obj"));
-			m = OBJLoader.loadModel(new File("res/models/ships/falcon/falcon2.obj"));
+			OBJLoader surfaceLoader = new OBJLoader();
+			OBJLoader shipLoader = new OBJLoader();
+			ship = OBJLoader.getModel("res/models/ships/falcon/falcon2.obj");
+			surface = OBJLoader.getModel("res/models/surface/flat.obj");
 			//m = OBJLoader.loadModel(new File("res/models/ships/enterprise/USSEnterprise.obj"));
 			
 			
@@ -246,8 +250,17 @@ public class Renderer {
 				GL11.glPushMatrix();
 				glTranslatef(1, -1, position);
 				glRotatef(0, 1, 1, 0);
+				GL11.glScalef(20, 20, 20);
+				surface.draw();
+				GL11.glPopMatrix();
+			}
+			
+			for(int i=0; i<1; i++){
+				GL11.glPushMatrix();
+				glTranslatef(1, -1, position);
+				glRotatef(0, 1, 1, 0);
 				GL11.glScalef(2, 2, 2);
-				m.draw();
+				ship.draw();
 				GL11.glPopMatrix();
 			}
 			
