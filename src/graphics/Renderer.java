@@ -44,6 +44,8 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 
 
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,6 +73,8 @@ import world.GameWorld;
 import world.Player;
 import controller.Camera;
 import controller.Controller;
+import entity.BaseEntity;
+import entity.Light;
 import entity.Quad;
 import entity.Sphere;
 
@@ -118,11 +122,11 @@ public class Renderer {
 		cam = gameWorld.getPlayerCamera();
 		getFpsDelta();
 		lastFPS = getTime();
-		drawNew();
+		draw();
 		
 	}
 	
-	public void drawNew(){
+	public void draw(){
 		try{
 			Display.setDisplayMode(new DisplayMode(1024, 768));
 			Display.setTitle("Bjorn");
@@ -141,14 +145,14 @@ public class Renderer {
 		//glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK); //Don't draw the back side of triangles
 		glEnable(GL_COLOR_MATERIAL);
-		glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		glColorMaterial(GL11.GL_FRONT, GL_DIFFUSE);
 		
 		
 		//cam.initProjection();
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective((float) 30, 1024f/768f, 0.001f, 10000);
+		gluPerspective((float) 60, Display.getWidth()/Display.getHeight(), 0.01f, 10000);
 		glMatrixMode(GL_MODELVIEW);
 		
 		
@@ -156,20 +160,17 @@ public class Renderer {
 		float rotationSpeed = 0.5f;
 		float rotation = 0.0f;
 		float lightRotation = 0.0f;
-		float lightRotationSpeed = 0.5f;
+		float lightRotationSpeed = 1.5f;
 		Model ship = null;
 		Model surface = null;
+		BaseEntity light = null;
 		try{
 			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
 			//m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
 			//m = OBJLoader.loadModel(new File("res/models/engine/engine.obj"));
-			OBJLoader surfaceLoader = new OBJLoader();
-			OBJLoader shipLoader = new OBJLoader();
 			ship = OBJLoader.getModel("res/models/ships/falcon/falcon2.obj");
 			surface = OBJLoader.getModel("res/models/surface/flat.obj");
-			//m = OBJLoader.loadModel(new File("res/models/ships/enterprise/USSEnterprise.obj"));
-			
-			
+			light = new Light(OBJLoader.getModel("res/models/light/lightbulb.obj"));
 		}catch (FileNotFoundException e){
 			e.printStackTrace();
 			System.out.println("Could not open file");
@@ -226,14 +227,28 @@ public class Renderer {
 		glLinkProgram(shaderProgram);
 		glValidateProgram(shaderProgram);
 		
-		glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
+		//glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
+		
+		
+		
+		// Move away from the 0,0,0 position
+		cam.moveY(-10);
+		cam.moveZ(-10, 1);
 		
 		while (!Display.isCloseRequested()){
 			//glUseProgram(shaderProgram);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			
-			glLoadIdentity();
+			// Make it possible to see the lines by pressing L
+			if(gameWorld.isWorldRepresentedAsLines()){
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+			}
+			else{
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+			}
+			
+			
+			//glLoadIdentity();
 			GL11.glPushMatrix();
 			
 			// Pull controller input
@@ -248,8 +263,8 @@ public class Renderer {
 			
 			for(int i=0; i<1; i++){
 				GL11.glPushMatrix();
-				glTranslatef(1, -1, position);
-				glRotatef(0, 1, 1, 0);
+				GL11.glTranslatef(1, -10, position);
+				GL11.glRotatef(0, 1, 1, 0);
 				GL11.glScalef(20, 20, 20);
 				surface.draw();
 				GL11.glPopMatrix();
@@ -257,25 +272,22 @@ public class Renderer {
 			
 			for(int i=0; i<1; i++){
 				GL11.glPushMatrix();
-				glTranslatef(1, -1, position);
-				glRotatef(0, 1, 1, 0);
+				GL11.glTranslatef(1, -1, position);
+				GL11.glRotatef(0, 1, 1, 0);
 				GL11.glScalef(2, 2, 2);
 				ship.draw();
 				GL11.glPopMatrix();
 			}
 			
-
+			
 			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 				Display.destroy();
 				System.exit(0);
 			}
 			
-			
-			GL11.glPushMatrix();
-			GL11.glRotatef(lightRotation, 1.0f, 1.0f, 1.0f);
-			GL11.glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
-			GL11.glPopMatrix();
-			
+			light.setRotationAngle(2);
+			light.rotateX(1);
+			light.draw();
 			
 			GL11.glEnd();
 			GL11.glPopMatrix();

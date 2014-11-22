@@ -26,6 +26,7 @@ public class GameWorld {
 	private Controller controller;
 	private static GameWorld gameWorld;
 	private Renderer renderer;
+	private boolean isRenderingLines;
 	
 	private Player player;
 	
@@ -77,14 +78,6 @@ public class GameWorld {
 	}
 	
 	
-	public void generateRandomSurface(int size){
-		for(int i=0; i<size; i++){
-			
-		}
-	}
-	
-	
-	
 	/**************************************/
 	/*/
 	 * 		Render specific shit
@@ -95,7 +88,13 @@ public class GameWorld {
 		return renderer.getFpsDelta();
 	}
 	
+	public void isWorldRepresentedAsLines(boolean bool){
+		isRenderingLines = bool;
+	}
 	
+	public boolean isWorldRepresentedAsLines(){
+		return isRenderingLines;
+	}
 	
 	
 	/**************************************/

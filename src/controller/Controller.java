@@ -3,6 +3,7 @@ package controller;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import world.GameWorld;
@@ -34,6 +35,9 @@ public class Controller {
 			    if (Keyboard.isKeyDown(Keyboard.KEY_P)){
 			    	gameWorld.populateRandomSpheres();
 			    }
+			    if(Keyboard.isKeyDown(Keyboard.KEY_L)){
+			    	gameWorld.isWorldRepresentedAsLines(!gameWorld.isWorldRepresentedAsLines());
+			    }
 			}
 		    if(Keyboard.isKeyDown(Keyboard.KEY_W)){
 		    	gameWorld.getPlayerCamera().moveZ(0.2f, 1);
@@ -56,7 +60,8 @@ public class Controller {
 		    else if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)){
 		    	gameWorld.getPlayerCamera().moveY(0.1f);
 		    }
-	
+		    
+
 			// Arrow keys
 			else if (Keyboard.getEventKey() == Keyboard.KEY_UP){
 				
