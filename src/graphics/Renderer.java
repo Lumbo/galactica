@@ -43,6 +43,7 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
 //import BjornMain;
 
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,6 +61,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL41;
 import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.GLUtils;
 import org.newdawn.slick.opengl.Texture;
@@ -122,7 +124,7 @@ public class Renderer {
 	
 	public void drawNew(){
 		try{
-			Display.setDisplayMode(new DisplayMode(640, 480));
+			Display.setDisplayMode(new DisplayMode(1024, 768));
 			Display.setTitle("Bjorn");
 			Display.create();
 			System.out.println("Opengl version is " + GL11.glGetString(GL11.GL_VERSION));
@@ -150,15 +152,20 @@ public class Renderer {
 		glMatrixMode(GL_MODELVIEW);
 		
 		
-		float position = -15f;
+		float position = -100f;
 		float rotationSpeed = 0.5f;
 		float rotation = 0.0f;
 		float lightRotation = 0.0f;
+		float lightRotationSpeed = 0.5f;
 		Model m = null;
 		try{
 			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
-			m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
+			//m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
 			//m = OBJLoader.loadModel(new File("res/models/engine/engine.obj"));
+			m = OBJLoader.loadModel(new File("res/models/ships/falcon/falcon2.obj"));
+			//m = OBJLoader.loadModel(new File("res/models/ships/enterprise/USSEnterprise.obj"));
+			
+			
 		}catch (FileNotFoundException e){
 			e.printStackTrace();
 			System.out.println("Could not open file");
@@ -215,7 +222,7 @@ public class Renderer {
 		glLinkProgram(shaderProgram);
 		glValidateProgram(shaderProgram);
 		
-		glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{-10, 80, -10, 1}));
+		glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
 		
 		while (!Display.isCloseRequested()){
 			//glUseProgram(shaderProgram);
@@ -231,36 +238,15 @@ public class Renderer {
 			// Camera setting thingy
 			cam.useView();
 			
-			GL11.glPushMatrix();
-			glTranslatef(0, 0, position);
-			glRotatef(rotation, 0, 1, 0);
-			
 			rotation += rotationSpeed;
-			m.draw();
-			GL11.glPopMatrix();
+			lightRotation += lightRotationSpeed;
 			
-			GL11.glPushMatrix();
-			glTranslatef(-3, 0, position);
-			glRotatef(rotation, 0, 0, 1);
-			m.draw();
-			GL11.glPopMatrix();
 			
-			GL11.glPushMatrix();
-			glTranslatef(3, 0, position);
-			glRotatef(rotation, 0, 1, 1);
-			m.draw();
-			GL11.glPopMatrix();
-			
-			GL11.glPushMatrix();
-			glTranslatef(0, -3, position);
-			glRotatef(rotation, 1, 1, 0);
-			m.draw();
-			GL11.glPopMatrix();
-
-			for(int i=0; i<30; i++){
+			for(int i=0; i<1; i++){
 				GL11.glPushMatrix();
-				glTranslatef((float)(Math.sin(i)*10), (float)(Math.cos(i)*10), position*i);
-				glRotatef(rotation, 1, 1, 0);
+				glTranslatef(1, -1, position);
+				glRotatef(0, 1, 1, 0);
+				GL11.glScalef(2, 2, 2);
 				m.draw();
 				GL11.glPopMatrix();
 			}
@@ -272,6 +258,10 @@ public class Renderer {
 			}
 			
 			
+			GL11.glPushMatrix();
+			GL11.glRotatef(lightRotation, 1.0f, 1.0f, 1.0f);
+			GL11.glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
+			GL11.glPopMatrix();
 			
 			
 			GL11.glEnd();
