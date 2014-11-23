@@ -25,6 +25,10 @@ public class BaseEntity {
 		this.position_z = z;
 	}
 	
+	public void moveTo(Vector3f pos){
+		moveTo(pos.getX(), pos.getY(), pos.getZ());
+	}
+	
 	public void scale(float s){
 		this.scale = s;
 	}
@@ -56,6 +60,7 @@ public class BaseEntity {
 		glPushMatrix();
 		org.lwjgl.opengl.GL11.
 		glTranslatef(position_x, position_y, position_z);
+		glRotatef(rotationAngle, rotation_x, rotation_y, rotation_z);
 		glScalef(scale, scale, scale);
 		this.model.draw();
 		glPopMatrix();
@@ -91,5 +96,9 @@ public class BaseEntity {
 	
 	public float getPositionZ(){
 		return position_z;
+	}
+	
+	public Vector3f getPosition(){
+		return new Vector3f(position_x, position_y, position_z);
 	}
 }

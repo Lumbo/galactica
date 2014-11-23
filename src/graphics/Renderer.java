@@ -46,6 +46,11 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 
 
+
+
+
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,10 +70,15 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL41;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.GLUtils;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import physics.Physics;
+import vehicles.Ship;
+import vehicles.parts.Engine;
+import vehicles.ships.FalconShip;
 import world.GameWorld;
 import world.Player;
 import controller.Camera;
@@ -151,7 +161,7 @@ public class Renderer {
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective((float) 30, Display.getWidth()/Display.getHeight(), 0.001f, 10000);
+		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), 0.001f, 10000);
 		glMatrixMode(GL_MODELVIEW);
 		
 		
@@ -160,13 +170,21 @@ public class Renderer {
 		float rotation = 0.0f;
 		float lightRotation = 0.0f;
 		float lightRotationSpeed = 1.5f;
-		Model ship = null;
+		
 		Model surface = null;
+		FalconShip ship = null;
 		Light light = null;
 		try{
-			ship = OBJLoader.getModel("res/models/ships/falcon/falcon6.obj");
+			ship = new FalconShip(OBJLoader.getModel("res/models/ships/falcon/falcon6.obj"));
 			surface = OBJLoader.getModel("res/models/surface/flat.obj");
 			light = new Light(OBJLoader.getModel("res/models/light/lightbulb.obj"));
+			
+			
+			// TODO: REFACTOR THE NEXT TWO LINES TO THE PROPER PLACE!
+			ship.setName("Falcon");
+			gameWorld.getPlayer().addShipToPlayer(ship);
+			gameWorld.getPlayer().setActiveShip(ship);
+			
 		}catch (FileNotFoundException e){
 			e.printStackTrace();
 			System.out.println("Could not open file");
@@ -223,11 +241,13 @@ public class Renderer {
 		glLinkProgram(shaderProgram);
 		glValidateProgram(shaderProgram);
 		
-		glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{10, 80, 100, 1.0f}));
+		glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{0.1f, 0.1f, 0.1f, 1.0f}));
 		
 		// Move away from the 0,0,0 position
 		cam.moveY(-10);
+		cam.moveX(1);
 		cam.moveZ(-10, 1);
+		
 		
 		while (!Display.isCloseRequested()){
 			//glUseProgram(shaderProgram);
@@ -241,7 +261,6 @@ public class Renderer {
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 			}
 			
-			
 			glLoadIdentity();
 			GL11.glPushMatrix();
 			
@@ -254,7 +273,6 @@ public class Renderer {
 			rotation += rotationSpeed;
 			lightRotation += lightRotationSpeed;
 			
-			
 			for(int i=0; i<1; i++){
 				GL11.glPushMatrix();
 				glTranslatef(1, -10, position);
@@ -264,35 +282,19 @@ public class Renderer {
 				GL11.glPopMatrix();
 			}
 			
-			for(int i=0; i<1; i++){
-				GL11.glPushMatrix();
-				glTranslatef(1, -1, position);
-				glRotatef(0, 1, 1, 0);
-				GL11.glScalef(2, 2, 2);
-				ship.draw();
-				GL11.glPopMatrix();
-			}
+			
+			ship.draw();
+
+			
 			
 			// Spin the light around the ship
 			light.moveTo((float)-Math.sin(lightRotation/100)*50, 20, ((float)Math.cos(lightRotation/100)*50)-100);
 			light.drawSpotLight();
 			
-			
 			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 				Display.destroy();
 				System.exit(0);
 			}
-			
-			glMatrixMode(GL_PROJECTION);
-			GL11.glPushMatrix();
-			GL11.glLoadIdentity();
-			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			GL11.glPushMatrix();
-			
-			glMatrixMode( GL_PROJECTION ) ;
-			GL11.glPopMatrix() ; // revert back to the matrix I had before.
-			glMatrixMode( GL_MODELVIEW ) ;
-			GL11.glPopMatrix() ;
 			
 			GL11.glEnd();
 			GL11.glPopMatrix();

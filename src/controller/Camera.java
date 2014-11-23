@@ -65,6 +65,10 @@ public class Camera {
 		GL11.glTranslatef(x, y, z);
 	}
 	
+	public void moveX(float x){
+		this.x = x;
+	}
+	
 	//Z is here the "plane-axis", meaning that you orientate along the plane through the z-axis
 	public void moveZ(float amt, float dir){
 		z += amt * Math.sin(Math.toRadians(ry + 90 * dir));

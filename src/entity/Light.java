@@ -21,7 +21,7 @@ public class Light extends BaseEntity {
 	private int pName = GL11.GL_LIGHT_MODEL_AMBIENT;
 	private FloatBuffer lightModelFloatBuffer = Util.asFloatBuffer(new float[] {0.05f, 0.5f, 10, 0.5f});
 	private FloatBuffer lightFloatBuffer = Util.asFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 1.0f});
-	private FloatBuffer spotDirection = Util.asFloatBuffer(new float[] {-100.0f, -100,0f, 0.0f});
+	private FloatBuffer spotDirection = Util.asFloatBuffer(new float[] {0.0f, 1,0f, 0.0f});
 	
 	public Light(Model m) {
 		super(m);
@@ -32,10 +32,9 @@ public class Light extends BaseEntity {
 	// that decides what type of light that should be rendered
 	public void drawSpotLight(){
 		GL11.glPushMatrix();
-		FloatBuffer light1 = Util.asFloatBuffer(new float[]{0.5f, 0.2f, 0.2f, 1.0f});
+		FloatBuffer light1 = Util.asFloatBuffer(new float[]{1.0f, 0.2f, 0.2f, 1.0f});
 		FloatBuffer lightPos1 = Util.asFloatBuffer(new float[]{-1f, 0.5f, 0.5f, 1.0f});
-		
-		
+
 		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
 		GL11.glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
 		GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, light1);

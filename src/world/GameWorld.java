@@ -100,6 +100,10 @@ public class GameWorld {
 		return player.getRotation();
 	}
 	
+	public Player getPlayer(){
+		return player;
+	}
+	
 	public Camera getPlayerCamera(){
 		return player.getPlayerCamera();
 	}

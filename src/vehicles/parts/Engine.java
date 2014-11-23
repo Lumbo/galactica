@@ -2,26 +2,31 @@ package vehicles.parts;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public class Engine {
+import entity.BaseEntity;
+import graphics.Model;
+
+public class Engine extends BaseEntity{
 	
-	private double maxForce;
+	private boolean isActive;
+	
 	private double throttle;
 	private double currentHeat;
 	private double heatLimit;
 	private double damage;
-	private boolean isActive;
+	
+	private final float maxThrottle = 1.1f;
+	private final float minThrottle = 0.0f;
+	private float maxForce;
 	
 	private Vector3f forceDirection;
 	
-	public Engine(){
-		forceDirection = new Vector3f(0, 1, 0);
+	public Engine(Model m){
+		super(m);
+		forceDirection = new Vector3f(0.0f, 0.0f, 0.0f);
+		System.out.println(forceDirection);
 	}
 	
-	public Engine(double maxForce){
-		this.maxForce = maxForce;
-	}
-	
-	public void setMaxForce(double force){
+	public void setMaxForce(float force){
 		this.maxForce = force;
 	}
 	
@@ -29,12 +34,13 @@ public class Engine {
 	public void setThrottle(double percentage){
 		this.throttle = percentage;
 		
-		double effectiveForce = (throttle/100)*maxForce;
+		float effectiveForce = (float) ((throttle/100)*maxForce);
 
 		forceDirection = new Vector3f(
-				(float)(forceDirection.getX()*effectiveForce), 
-				(float)(forceDirection.getX()*effectiveForce), 
-				(float)(forceDirection.getX()*effectiveForce));
+				(float)(0), 
+				(float)(effectiveForce), 
+				(float)(0));
+		System.out.println(forceDirection);
 	}
 	
 	public void setHeat(double heat){
@@ -50,15 +56,35 @@ public class Engine {
 	}
 	
 	public void increaseThrottle(){
-		setThrottle(throttle += 0.02);
+		if((throttle+0.02) < maxThrottle){
+			throttle += 0.02;	
+		}
+		else{
+			throttle = maxThrottle;
+		}
+		setThrottle(throttle);
 	}
 	
 	public void decreaseThrottle(){
-		setThrottle(throttle -= 0.02);
+		if((throttle-0.02) > minThrottle){
+			throttle -= 0.02;	
+		}
+		else{
+			throttle = minThrottle;
+		}
+		
+		setThrottle(throttle);
 	}
 	
 	public double getMaxForce(){
 		return this.maxForce;
 	}
 	
+	public Vector3f getForceVector(){
+		return forceDirection;
+	}
+	
+	public double getThrottle(){
+		return throttle;
+	}
 }

@@ -6,6 +6,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import vehicles.Ship;
 import world.GameWorld;
 
 public class Controller {
@@ -53,10 +54,10 @@ public class Controller {
 		    }
 		    
 		    if(Keyboard.isKeyDown(Keyboard.KEY_ADD)){
-		    	
+		    	gameWorld.getPlayer().getCurrentShip().increaseThrottle();
 		    }
-		    else if(Keyboard.isKeyDown(Keyboard.KEY_MINUS)){
-		    	
+		    else if(Keyboard.isKeyDown(Keyboard.KEY_SUBTRACT)){
+		    	gameWorld.getPlayer().getCurrentShip().decreaseThrottle();
 		    }
 		    
 			// Arrow keys
