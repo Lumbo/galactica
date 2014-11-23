@@ -80,4 +80,16 @@ public class BaseEntity {
 	public float getRotateZ(){
 		return rotation_z;
 	}
+	
+	public float getPositionX(){
+		return position_x;
+	}
+	
+	public float getPositionY(){
+		return position_y;
+	}
+	
+	public float getPositionZ(){
+		return position_z;
+	}
 }

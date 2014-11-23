@@ -140,7 +140,8 @@ public class Renderer {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
-		glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.05f, 0.5f, 0.5f, 1f}));
+		glEnable(GL11.GL_LIGHT1);
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.2f, 0.2f, 0.2f, 1.0f}));
 		glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[] {1.55f, 1.5f, 1.55f, 1f}));
 		//glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK); //Don't draw the back side of triangles
@@ -148,11 +149,9 @@ public class Renderer {
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		
 		
-		//cam.initProjection();
-		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective((float) 30, 1024f/768f, 0.001f, 10000);
+		gluPerspective((float) 30, Display.getWidth()/Display.getHeight(), 0.001f, 10000);
 		glMatrixMode(GL_MODELVIEW);
 		
 		
@@ -168,7 +167,7 @@ public class Renderer {
 			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
 			//m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
 			//m = OBJLoader.loadModel(new File("res/models/engine/engine.obj"));
-			ship = OBJLoader.getModel("res/models/ships/falcon/falcon2.obj");
+			ship = OBJLoader.getModel("res/models/ships/falcon/falcon3.obj");
 			surface = OBJLoader.getModel("res/models/surface/flat.obj");
 			light = new Light(OBJLoader.getModel("res/models/light/lightbulb.obj"));
 		}catch (FileNotFoundException e){
@@ -227,7 +226,7 @@ public class Renderer {
 		glLinkProgram(shaderProgram);
 		glValidateProgram(shaderProgram);
 		
-		glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
+		//glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
 		
 		// Move away from the 0,0,0 position
 		cam.moveY(-10);
@@ -277,19 +276,9 @@ public class Renderer {
 				GL11.glPopMatrix();
 			}
 			
-//			for(int i=0; i<1; i++){
-//				GL11.glPushMatrix();
-//				GL11.glRotatef(lightRotation, 1.0f, 1.0f, 0.5f);
-//				glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.05f, 0.5f, 10, 0.5f}));
-//				GL11.glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.1f}));
-//				GL11.glScalef(1, 1, 1);
-//				light.draw();
-//				GL11.glPopMatrix();
-//			}
-			
-			light.rotate(1, 1, 1, 1);
+			// Spin the light around the ship
+			light.moveTo((float)-Math.sin(lightRotation/100)*50, 20, ((float)Math.cos(lightRotation/100)*50)-100);
 			light.drawSpotLight();
-			//light.draw();
 			
 			
 			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
@@ -302,7 +291,6 @@ public class Renderer {
 			
 			Display.update();
 			Display.sync(60);
-			
 			
 			if(printFPS){
 				updateFPS();

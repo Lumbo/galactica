@@ -10,6 +10,8 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL44;
+import org.lwjgl.util.glu.GLU;
+import org.newdawn.slick.opengl.GLUtils;
 
 import util.Util;
 import graphics.Model;
@@ -18,7 +20,8 @@ public class Light extends BaseEntity {
 
 	private int pName = GL11.GL_LIGHT_MODEL_AMBIENT;
 	private FloatBuffer lightModelFloatBuffer = Util.asFloatBuffer(new float[] {0.05f, 0.5f, 10, 0.5f});
-	private FloatBuffer lightFloatBuffer = Util.asFloatBuffer(new float[]{100, 800, -10, 0.1f});
+	private FloatBuffer lightFloatBuffer = Util.asFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 1.0f});
+	private FloatBuffer spotDirection = Util.asFloatBuffer(new float[] {-100.0f, -100,0f, 0.0f});
 	
 	public Light(Model m) {
 		super(m);
@@ -29,13 +32,17 @@ public class Light extends BaseEntity {
 	// that decides what type of light that should be rendered
 	public void drawSpotLight(){
 		GL11.glPushMatrix();
-		GL11.glColor3f(1f, 0, 0);
-		GL11.glRotatef(super.getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
-		GL11.glLightModel(GL_LIGHT_MODEL_AMBIENT, lightModelFloatBuffer);
-		GL11.glLight(GL11.GL_LIGHT0, GL_POSITION, lightFloatBuffer);
+		FloatBuffer light1 = Util.asFloatBuffer(new float[]{0.5f, 0.2f, 0.2f, 1.0f});
+		FloatBuffer lightPos1 = Util.asFloatBuffer(new float[]{-1f, 0.5f, 0.5f, 1.0f});
 		
-		//GL11.glLightf(GL11.GL_LIGHT0, GL_POSITION, -5);
-		GL11.glLightf(GL11.GL_LIGHT0, GL11.GL_SPOT_DIRECTION, 0.1f);
+		
+		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
+		GL11.glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
+		GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, light1);
+		GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION, lightPos1);
+		GL11.glEnable(GL11.GL_COLOR);
+		GL11.glColor3f(1.0f,  1.0f,  0.0f);
+		
 		
 		GL11.glScalef(0.5f, 0.5f, 0.5f);
 		getModel().draw();
@@ -47,6 +54,7 @@ public class Light extends BaseEntity {
 	@Override
 	public void draw() {
 		GL11.glPushMatrix();
+		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
 		GL11.glRotatef(super.getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
 		GL11.glLightModel(GL_LIGHT_MODEL_AMBIENT, lightModelFloatBuffer);
 		GL11.glLight(GL11.GL_LIGHT0, GL_POSITION, lightFloatBuffer);
@@ -55,5 +63,9 @@ public class Light extends BaseEntity {
 		GL11.glPopMatrix();
 	}
 
+	
+	public void setSpotLightDirection(float[] f){
+		spotDirection = Util.asFloatBuffer(f);
+	}
 	
 }
