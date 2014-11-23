@@ -54,28 +54,6 @@ public class GameWorld {
 		return gameWorld;
 	}
 	
-	public void populateRandomSquares(){
-		for (int i=0; i<10;i++){
-			quadList.add(new Quad(10+i, 10+i, 10+i));
-		}
-		
-		double rand = Math.random()*2;
-		quadList.add(new Quad(rand, rand, rand));
-		
-		renderer.addQuads(quadList);
-		
-	}
-	
-	public void populateRandomSpheres(){
-		double rand = Math.random();
-		for (int i=0; i<100; i++){
-			sphereList.add(new Sphere((float)rand*100f, 20, 20));
-		}
-		
-		renderer.addSpheres(sphereList);
-		
-	}
-	
 	
 	/**************************************/
 	/*/

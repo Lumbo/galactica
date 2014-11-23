@@ -1,5 +1,6 @@
 package vehicles.ships;
 
+import graphics.Model;
 import vehicles.Ship;
 
 public class FalconShip extends Ship {
@@ -12,13 +13,13 @@ public class FalconShip extends Ship {
 	}
 	
 	@Override
-	public void setShipName(String s) {
+	public void setName(String s) {
 		setName(s);
 	}
 
 	@Override
-	public void setShipModel(String s) {
-		setModel(s);
+	public void setModel(Model model) {
+		super.setModel(model);
 	}
 	
 	public void setWeight(double w) {

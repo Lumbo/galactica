@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entity.Quad;
+import graphics.Model;
 import vehicles.parts.Engine;
 
-public abstract class Ship {
-	
-	private List<Quad> quads = new ArrayList<Quad>();
+public class Ship {
 	
 	private List<Engine> engines = new ArrayList<Engine>();
 	
 	private String name;
-	private String model;
+	private Model model;
 	
-	private double health;
+	private double shield;
+	private double hullHitPoints;
 	private double weight;
-	
+	private double energy;
 	
 	public Ship(){
 	}
@@ -26,24 +26,51 @@ public abstract class Ship {
 		this.name = name;
 	}
 	
-	public void setModel(String model){
+	public void setModel(Model model){
 		this.model = model;
 	}
 	
-	public void setHealth(int health){
-		this.health = health;
+	public void setShieldHitPoints(int shield){
+		this.shield = shield;
 	}
 	
+	public void setHullHitPoints(double hullHitPoints){
+		this.hullHitPoints = hullHitPoints;
+	}
 	
-	public String getShipName(){
+	public void setWeight(double weight){
+		this.weight = weight;
+	}
+	
+	public void setEnergy(double energy){
+		this.energy = energy;
+	}
+	
+	public void addEngines(List<Engine> engines){
+		this.engines = engines; 
+	}
+	
+	public String getName(){
 		return name;
 	}
 	
-	public String getShipModel(){
+	public Model getModel(){
 		return model;
 	}
 	
-	public abstract void setShipName(String s);
-	public abstract void setShipModel(String s);
+	public double getShieldHitPoints(){
+		return shield;
+	}
 	
+	public double getHullHitPoints(){
+		return hullHitPoints;
+	}
+	
+	public double getWeight(){
+		return weight;
+	}
+	
+	public double getEnergy(){
+		return energy;
+	}
 }

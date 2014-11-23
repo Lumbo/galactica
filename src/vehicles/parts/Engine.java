@@ -1,5 +1,7 @@
 package vehicles.parts;
 
+import org.lwjgl.util.vector.Vector3f;
+
 public class Engine {
 	
 	private double maxForce;
@@ -7,26 +9,32 @@ public class Engine {
 	private double currentHeat;
 	private double heatLimit;
 	private double damage;
+	private boolean isActive;
 	
+	private Vector3f forceDirection;
 	
 	public Engine(){
-		
+		forceDirection = new Vector3f(0, 1, 0);
 	}
 	
 	public Engine(double maxForce){
 		this.maxForce = maxForce;
 	}
 	
-	public void setForce(double force){
+	public void setMaxForce(double force){
 		this.maxForce = force;
 	}
 	
-	public double getForce(){
-		return this.maxForce;
-	}
 	
 	public void setThrottle(double percentage){
 		this.throttle = percentage;
+		
+		double effectiveForce = (throttle/100)*maxForce;
+
+		forceDirection = new Vector3f(
+				(float)(forceDirection.getX()*effectiveForce), 
+				(float)(forceDirection.getX()*effectiveForce), 
+				(float)(forceDirection.getX()*effectiveForce));
 	}
 	
 	public void setHeat(double heat){
@@ -39,6 +47,18 @@ public class Engine {
 	
 	public void overHeatWarning(){
 		
+	}
+	
+	public void increaseThrottle(){
+		setThrottle(throttle += 0.02);
+	}
+	
+	public void decreaseThrottle(){
+		setThrottle(throttle -= 0.02);
+	}
+	
+	public double getMaxForce(){
+		return this.maxForce;
 	}
 	
 }

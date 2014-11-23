@@ -27,14 +27,7 @@ public class Controller {
 	
 	public void keyboardPoll() {
 		if(Keyboard.isCreated()){
-			//System.out.println(Keyboard.getEventCharacter());
 			while(Keyboard.next()){
-				if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
-			    	gameWorld.populateRandomSquares();
-			    }
-			    if (Keyboard.isKeyDown(Keyboard.KEY_P)){
-			    	gameWorld.populateRandomSpheres();
-			    }
 			    if(Keyboard.isKeyDown(Keyboard.KEY_L)){
 			    	gameWorld.isWorldRepresentedAsLines(!gameWorld.isWorldRepresentedAsLines());
 			    }
@@ -46,11 +39,9 @@ public class Controller {
 		        gameWorld.getPlayerCamera().moveZ(-0.2f, 1);
 		    }
 		    if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-		        //gameWorld.getPlayerCamera().rotateY(-0.2f);
 		    	gameWorld.getPlayerCamera().moveZ(0.2f, 0);
 		    }
 		    else if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-		        //gameWorld.getPlayerCamera().rotateY(0.2f);
 		    	gameWorld.getPlayerCamera().moveZ(-0.2f, 0);
 		    }
 	
@@ -61,7 +52,13 @@ public class Controller {
 		    	gameWorld.getPlayerCamera().moveY(0.1f);
 		    }
 		    
-
+		    if(Keyboard.isKeyDown(Keyboard.KEY_ADD)){
+		    	
+		    }
+		    else if(Keyboard.isKeyDown(Keyboard.KEY_MINUS)){
+		    	
+		    }
+		    
 			// Arrow keys
 			else if (Keyboard.getEventKey() == Keyboard.KEY_UP){
 				

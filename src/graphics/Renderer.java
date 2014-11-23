@@ -164,10 +164,7 @@ public class Renderer {
 		Model surface = null;
 		Light light = null;
 		try{
-			//m = OBJLoader.loadModel(new File("res/models/monkey/monkey.obj"));
-			//m = OBJLoader.loadModel(new File("res/models/bunny/bunny.obj"));
-			//m = OBJLoader.loadModel(new File("res/models/engine/engine.obj"));
-			ship = OBJLoader.getModel("res/models/ships/falcon/falcon3.obj");
+			ship = OBJLoader.getModel("res/models/ships/falcon/falcon6.obj");
 			surface = OBJLoader.getModel("res/models/surface/flat.obj");
 			light = new Light(OBJLoader.getModel("res/models/light/lightbulb.obj"));
 		}catch (FileNotFoundException e){
@@ -226,7 +223,7 @@ public class Renderer {
 		glLinkProgram(shaderProgram);
 		glValidateProgram(shaderProgram);
 		
-		//glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{100, 800, -10, 0.5f}));
+		glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{10, 80, 100, 1.0f}));
 		
 		// Move away from the 0,0,0 position
 		cam.moveY(-10);
@@ -285,6 +282,17 @@ public class Renderer {
 				Display.destroy();
 				System.exit(0);
 			}
+			
+			glMatrixMode(GL_PROJECTION);
+			GL11.glPushMatrix();
+			GL11.glLoadIdentity();
+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
+			GL11.glPushMatrix();
+			
+			glMatrixMode( GL_PROJECTION ) ;
+			GL11.glPopMatrix() ; // revert back to the matrix I had before.
+			glMatrixMode( GL_MODELVIEW ) ;
+			GL11.glPopMatrix() ;
 			
 			GL11.glEnd();
 			GL11.glPopMatrix();
