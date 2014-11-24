@@ -2,6 +2,7 @@
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
+import entity.BaseEntity;
 import graphics.Model;
 import graphics.OBJLoader;
 
@@ -11,8 +12,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.*;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.*;
 
 public class BjornMain {
@@ -33,14 +36,16 @@ public class BjornMain {
 		float rotation = 0.0f;
 		float lightRotation = 0.0f;
 		Model m = null;
-		try{
-			m = OBJLoader.getModel("res/models/bunny/bunny.obj");
-		}catch (FileNotFoundException e){
-			e.printStackTrace();
-			System.out.println("Could not open file");
-		}catch (IOException e){
-			e.printStackTrace();
-		}
+//		try{
+			//m = OBJLoader.getObjLoader().getModel("res/models/bunny/bunny.obj");
+//		}catch (FileNotFoundException e){
+//			e.printStackTrace();
+//			System.out.println("Could not open file");
+//		}catch (IOException e){
+//			e.printStackTrace();
+//		}
+		
+		BaseEntity e = new BaseEntity(m);
 		
 		int shaderProgram = createShader("res/shaders/shader.vert", "res/shaders/shader.frag");
 		
@@ -54,26 +59,18 @@ public class BjornMain {
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			
-			glTranslatef(0, 0, position);
-			glRotatef(rotation, 0, 1, 0);
+			e.moveTo(0, 0, -20);
+			e.draw();
 			
-			rotation += rotationSpeed;
-			m.draw();
+			e.moveTo(-4, 0, -20);
+			e.draw();
 			
-			glLoadIdentity();
-			glTranslatef(-3, 0, position);
-			glRotatef(rotation, 0, 0, 1);
-			m.draw();
+			e.moveTo(4, 0, -20);
+			e.draw();
 			
-			glLoadIdentity();
-			glTranslatef(3, 0, position);
-			glRotatef(rotation, 0, 1, 1);
-			m.draw();
+			e.moveTo(0, -4, -20);
+			e.draw();
 			
-			glLoadIdentity();
-			glTranslatef(0, -3, position);
-			glRotatef(rotation, 1, 1, 0);
-			m.draw();
 			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 				Display.destroy();
 				System.exit(0);
@@ -102,7 +99,6 @@ public class BjornMain {
 		glCullFace(GL_BACK); //Don't draw the back side of triangles
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
-		
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();

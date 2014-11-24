@@ -26,6 +26,7 @@ public class GameWorld {
 	private Controller controller;
 	private static GameWorld gameWorld;
 	private Renderer renderer;
+	private boolean isRenderingLines;
 	
 	private Player player;
 	
@@ -43,7 +44,6 @@ public class GameWorld {
 		renderer.initRenderer();
 		getPlayerCamera().initProjection();
 		controller.initKeyboard();
-		System.out.println("knark");
 		
 	}
 	
@@ -53,36 +53,6 @@ public class GameWorld {
 		}
 		return gameWorld;
 	}
-	
-	public void populateRandomSquares(){
-		for (int i=0; i<10;i++){
-			quadList.add(new Quad(10+i, 10+i, 10+i));
-		}
-		
-		double rand = Math.random()*2;
-		quadList.add(new Quad(rand, rand, rand));
-		
-		renderer.addQuads(quadList);
-		
-	}
-	
-	public void populateRandomSpheres(){
-		double rand = Math.random();
-		for (int i=0; i<100; i++){
-			sphereList.add(new Sphere((float)rand*100f, 20, 20));
-		}
-		
-		renderer.addSpheres(sphereList);
-		
-	}
-	
-	
-	public void generateRandomSurface(int size){
-		for(int i=0; i<size; i++){
-			
-		}
-	}
-	
 	
 	
 	/**************************************/
@@ -95,7 +65,13 @@ public class GameWorld {
 		return renderer.getFpsDelta();
 	}
 	
+	public void isWorldRepresentedAsLines(boolean bool){
+		isRenderingLines = bool;
+	}
 	
+	public boolean isWorldRepresentedAsLines(){
+		return isRenderingLines;
+	}
 	
 	
 	/**************************************/
@@ -122,6 +98,10 @@ public class GameWorld {
 	
 	public Vector3f getPlayerRotation(){
 		return player.getRotation();
+	}
+	
+	public Player getPlayer(){
+		return player;
 	}
 	
 	public Camera getPlayerCamera(){

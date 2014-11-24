@@ -57,7 +57,7 @@ public class Player {
 	 */
 	public void setActiveShip(Ship ship){
 		for(Ship s : shipList){
-			if ((s.getShipModel()).equals(ship.getShipModel())){
+			if ((s.getName()).equals(ship.getName())){
 				currentShip = ship;
 			}
 		}

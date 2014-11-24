@@ -14,8 +14,8 @@ public class Model {
 	public List<Vector3f> normals = new ArrayList<Vector3f>();
 	public List<Face> faces = new ArrayList<Face>();
 	
-	private static int vboVertexHandle;
-	private static int vboNormalHandle;
+	private int vboVertexHandle;
+	private int vboNormalHandle;
 	
 	public Model(){
 		
@@ -57,7 +57,7 @@ public class Model {
 		glNormalPointer(GL_FLOAT, 0, 0L);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glColor3f(0.7f, 0.0f, 0.0f);
+		glColor3f(0.7f, 0.7f, 0.7f);
 		glMaterialf(GL_FRONT, GL_SHININESS, 10f);
 		glDrawArrays(GL_TRIANGLES, 0, faces.size()*3);
 		
