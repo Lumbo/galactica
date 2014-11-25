@@ -1,5 +1,7 @@
 package vehicles.ships;
 
+import static org.lwjgl.opengl.GL11.glRotatef;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ public class FalconShip extends Ship {
 			if(i == 1 || i == 3){
 				engine.rotate(180, 0, 1, 0);
 			}
-			engine.setThrottle(81.9);
+			engine.setThrottle(0);
 			engineList.add(engine);
 			
 		}
@@ -69,8 +71,7 @@ public class FalconShip extends Ship {
 		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
 		GL11.glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
 		GL11.glScalef(2, 2, 2);
-		String sumYForce = "";
-		String rawYForce = "";
+
 		Vector3f forceVector;
 		for(Engine e : getEngines()){
 			forceVector = new Vector3f(
@@ -78,11 +79,8 @@ public class FalconShip extends Ship {
 					(float)(e.getForceVector().getY()/getMass()),
 					e.getForceVector().getZ());
 			applyForce(forceVector);
-			rawYForce = rawYForce + " " + e.getForceVector().getY();
-			sumYForce = sumYForce + " " + forceVector.getY();
+
 		}
-		System.out.println("Effective engine force: " + sumYForce);
-		System.out.println("Raw engine force: " + rawYForce);
 		getModel().draw();
 		GL11.glPopMatrix();
 	}

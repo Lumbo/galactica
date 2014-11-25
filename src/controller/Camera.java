@@ -29,7 +29,6 @@ public class Camera {
 	}
 	
 	public Camera(float fov, float aspect, float zNear, float zFar){
-		
 		x=0;
 		y=0;
 		z=0;
@@ -42,7 +41,6 @@ public class Camera {
 		this.aspect = aspect;
 		this.zNear = zNear;
 		this.zFar = zFar;
-		//initProjection();
 	}
 	
 	public void initProjection(){
