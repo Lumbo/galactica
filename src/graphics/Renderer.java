@@ -112,8 +112,9 @@ public class Renderer {
 	public void draw(){
 		try{
 			Display.setDisplayMode(new DisplayMode(1024, 768));
-			Display.setTitle("Bjorn");
+			Display.setTitle("Galactica");
 			Display.create();
+			
 			System.out.println("Opengl version is " + GL11.glGetString(GL11.GL_VERSION));
 		} catch (LWJGLException e){
 			e.printStackTrace();
@@ -126,7 +127,7 @@ public class Renderer {
 		glEnable(GL11.GL_LIGHT1);
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.2f, 0.2f, 0.2f, 1.0f}));
 		glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[] {1.55f, 1.5f, 1.55f, 1f}));
-		//glEnable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK); //Don't draw the back side of triangles
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
