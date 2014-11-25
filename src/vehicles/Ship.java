@@ -19,10 +19,11 @@ public class Ship extends BaseEntity {
 	
 	private double shield;
 	private double hullHitPoints;
-	private double weight;
+	private double mass;
 	private double energy;
 	private float yVelocity = 0;
-	private float distanceFromSurface = 0;
+	private float rotationAngle = 0;
+	
 	private Vector3f resultantForce = new Vector3f(getPosition());
 	
 	public Ship(Model m){
@@ -34,16 +35,39 @@ public class Ship extends BaseEntity {
 	}
 
 	public void applyForce(Vector3f force){
-		yVelocity += Physics.getGravity();
+		yVelocity += force.getY();
 		resultantForce.set(
 				resultantForce.getX()+force.getX(), 
-				resultantForce.getY()+yVelocity+force.getY(), 
+				resultantForce.getY()+yVelocity, 
 				resultantForce.getZ()+force.getZ());
-		moveTo(resultantForce);
-		yVelocity += force.getY();
+		moveTo(resultantForce);	
+				
 		System.out.println("Falling speed: " + yVelocity);
 		System.out.println("YPos: " + resultantForce.getY());
 	}
+	
+	public void applyRotationReducer(){
+		float tmpRot = rotationAngle;
+		rotationAngle = getRotationAngle();
+		
+		System.out.println("Delta rotation " + (rotationAngle-tmpRot));
+		
+		/*if(getRotateY() > 0){
+			rotateStatic((float)(rotationAngle-(100000/mass)), 0, 1, 0);
+		}
+		else if(getRotateY() < 0){
+			rotateStatic((float)(rotationAngle+(100000/mass)), 0, 1, 0);
+		}*/
+	}
+	
+	public void turnLeftDegrees(float angle){
+		rotate((float)(angle), 0, 1f, 0);
+	}
+	
+	public void turnRightDegrees(float angle){
+		rotate((float)(-angle), 0, 1f, 0);
+	}
+	
 	
 	public void setShieldHitPoints(int shield){
 		this.shield = shield;
@@ -53,8 +77,8 @@ public class Ship extends BaseEntity {
 		this.hullHitPoints = hullHitPoints;
 	}
 	
-	public void setWeight(double weight){
-		this.weight = weight;
+	public void setMass(double mass){
+		this.mass = mass;
 	}
 	
 	public void setEnergy(double energy){
@@ -95,8 +119,8 @@ public class Ship extends BaseEntity {
 		return hullHitPoints;
 	}
 	
-	public double getWeight(){
-		return weight;
+	public double getMass(){
+		return mass;
 	}
 	
 	public double getEnergy(){

@@ -16,7 +16,7 @@ import vehicles.parts.Engine;
 
 public class FalconShip extends Ship {
 	
-	private double weight = 2000000; // in kilograms
+	private double mass = 2000000; // in kilograms
 	private double fuel = 1000;
 	
 	public FalconShip(Model m) throws FileNotFoundException, IOException{
@@ -24,25 +24,20 @@ public class FalconShip extends Ship {
 		List<Engine> engineList = new ArrayList<Engine>();
 		for(int i=0; i<4; i++){
 			Engine engine = new Engine(OBJLoader.getModel("res/models/engine/engine1.obj"));
-			engine.setMaxForce(1);
+			engine.setMaxForce(10000);
 			if(i == 1 || i == 3){
 				engine.rotate(180, 0, 1, 0);
 			}
+			engine.setThrottle(81.9);
 			engineList.add(engine);
+			
 		}
 		addEngines(engineList);
-	}
-	
-	public void setWeight(double w) {
-		this.weight = w;
+		setMass(mass);
 	}
 	
 	public void setFuel(double fuel){
 		this.fuel = fuel;
-	}
-	
-	public double getWeight() {
-		return weight;
 	}
 	
 	public double getFuel(){
@@ -55,34 +50,40 @@ public class FalconShip extends Ship {
 	
 	@Override
 	public void draw() {
-		GL11.glPushMatrix();
-		GL11.glTranslatef(1, -1, -100.0f);
-		GL11.glRotatef(0, 1, 1, 0);
-		GL11.glScalef(2, 2, 2);
-		for(Engine e : getEngines()){
-			applyForce(e.getForceVector());
-		}
 		for(int i=0; i<getEngines().size(); i++){
 			if(i==0){
-				getEngines().get(i).moveTo(getPositionX()+7, getPositionY()+2, getPositionZ()-3f);
+				getEngines().get(i).moveTo(getPositionX()+13, getPositionY()+5, getPositionZ()-4.6f);
 			}
 			else if(i==1){
-				getEngines().get(i).moveTo(getPositionX()+7, getPositionY()+2, getPositionZ()+2.2f);
+				getEngines().get(i).moveTo(getPositionX()+13, getPositionY()+5, getPositionZ()+3.0f);
 			}
 			else if(i==2){
-				getEngines().get(i).moveTo(getPositionX()-8, getPositionY()+4, getPositionZ()-5f);
+				getEngines().get(i).moveTo(getPositionX()-8, getPositionY()+4, getPositionZ()-6.6f);
 			}
 			else if(i==3){
-				getEngines().get(i).moveTo(getPositionX()-8, getPositionY()+4, getPositionZ()+4.2f);
+				getEngines().get(i).moveTo(getPositionX()-8, getPositionY()+4, getPositionZ()+5f);
 			}
-			
-			getEngines().get(i).scale(0.5f);
 			getEngines().get(i).draw();
 		}
+		GL11.glPushMatrix();
+		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
+		GL11.glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
+		GL11.glScalef(2, 2, 2);
+		String sumYForce = "";
+		String rawYForce = "";
+		Vector3f forceVector;
+		for(Engine e : getEngines()){
+			forceVector = new Vector3f(
+					e.getForceVector().getX(),
+					(float)(e.getForceVector().getY()/getMass()),
+					e.getForceVector().getZ());
+			applyForce(forceVector);
+			rawYForce = rawYForce + " " + e.getForceVector().getY();
+			sumYForce = sumYForce + " " + forceVector.getY();
+		}
+		System.out.println("Effective engine force: " + sumYForce);
+		System.out.println("Raw engine force: " + rawYForce);
 		getModel().draw();
-		
-
-
 		GL11.glPopMatrix();
 	}
 

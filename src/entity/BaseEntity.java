@@ -56,6 +56,29 @@ public class BaseEntity {
 		this.rotationAngle += angle;
 	}
 	
+	public void rotateStatic(float angle, float x, float y, float z){
+		setStaticRotationAngle(angle);
+		rotateStaticX(x);
+		rotateStaticY(y);
+		rotateStaticZ(z);
+	}
+	
+	public void setStaticRotationAngle(float angle){
+		this.rotationAngle = angle;
+	}
+	
+	public void rotateStaticX(float r){
+		this.rotation_x = r;
+	}
+	
+	public void rotateStaticY(float r){
+		this.rotation_y = r;
+	}
+	
+	public void rotateStaticZ(float r){
+		this.rotation_z = r;
+	}
+	
 	public void draw(){
 		glPushMatrix();
 		org.lwjgl.opengl.GL11.

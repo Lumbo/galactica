@@ -43,14 +43,6 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
 //import BjornMain;
 
 
-
-
-
-
-
-
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,22 +60,15 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL41;
-import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
-import org.newdawn.slick.opengl.GLUtils;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 import physics.Physics;
-import vehicles.Ship;
-import vehicles.parts.Engine;
 import vehicles.ships.FalconShip;
 import world.GameWorld;
-import world.Player;
 import controller.Camera;
 import controller.Controller;
-import entity.BaseEntity;
 import entity.Light;
 import entity.Quad;
 import entity.Sphere;
@@ -95,11 +80,6 @@ public class Renderer {
 	
 	private static double angle = 0;
 	
-	private int gridSize = 10;
-	private float tileSize = 0.02f;
-	private int ceilingHeight = 10;
-	
-	
 	private static float zNear = 0.001f;
 	private static float zFar = 20000f;
 
@@ -109,15 +89,8 @@ public class Renderer {
     private static long lastFPS;
 	private static int fps;
     private static long lastFrame;
-    private static boolean vsync = true; 
 	
     private boolean printFPS = true;
-    
-	private double x = 0;
-	private double y = 0;
-	private double z = 0;
-
-	private Texture earth; 
 	
 	private Camera cam;
 	
@@ -184,6 +157,7 @@ public class Renderer {
 			ship.setName("Falcon");
 			gameWorld.getPlayer().addShipToPlayer(ship);
 			gameWorld.getPlayer().setActiveShip(ship);
+			ship.moveTo(1, 10, -10.0f);
 			
 		}catch (FileNotFoundException e){
 			e.printStackTrace();
@@ -266,7 +240,8 @@ public class Renderer {
 			
 			// Pull controller input
 			pullController();
-
+			
+			
 			// Camera setting thingy
 			cam.useView();
 			
@@ -282,10 +257,9 @@ public class Renderer {
 				GL11.glPopMatrix();
 			}
 			
-			
+			ship.applyRotationReducer();
+			ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
-
-			
 			
 			// Spin the light around the ship
 			light.moveTo((float)-Math.sin(lightRotation/100)*50, 20, ((float)Math.cos(lightRotation/100)*50)-100);
@@ -295,6 +269,8 @@ public class Renderer {
 				Display.destroy();
 				System.exit(0);
 			}
+			
+
 			
 			GL11.glEnd();
 			GL11.glPopMatrix();
@@ -309,9 +285,6 @@ public class Renderer {
 		Display.destroy();
 	}
 
-	
-
-	
 	
 	/**
 	 * This method just figures out a delta by comparing drawn frames and adds
@@ -339,51 +312,9 @@ public class Renderer {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
 	
-	
 	public void pullController(){
 		controller.keyboardPoll();
 		controller.mousePoll();
-	}
-	
-	
-	public void rotateCube(double x, double y, double acceleration){
-
-		if(controller.getMouseButton() == 1){
-			getAngle(1);
-			GL11.glTranslated(x, y, 0);
-			GL11.glRotated(angle, controller.getMouseDx(), 0, acceleration);
-		}
-		else if(controller.getMouseButton() == 2){
-			getAngle(-1);
-			GL11.glTranslated(x, y, 0);
-			GL11.glRotated(angle, 0, controller.getMouseDy(), acceleration);
-		}
-		else if(controller.getMouseButton() == -1){
-			GL11.glTranslated(x, y, 0);
-			GL11.glRotated(angle, 0, 0, 1.0f);
-		}
-		
-		if(controller.getMouseScroll()!=0){
-			GL11.glTranslated(0, 0, controller.getMouseScroll());
-			GL11.glRotated(angle, 0, 0, controller.getMouseScroll());
-		}
-		
-		System.out.println("Angle: " + angle);
-		
-		//GL11.glTranslated(-x, -y, 0);
-
-		
-	}
-	
-	public static double getAngle(int i){
-		if (i>0){
-			return angle += 0.15 * fps;	
-		}
-		else{
-			return angle -= 0.15 * fps;
-		}
-			
-		
 	}
 	
 	private Texture loadTexture(String key) {
@@ -394,44 +325,7 @@ public class Renderer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		return null;
-	}
-	
-	
-	
-	public void renderSphere(float x, float y, float z){
-		GL11.glPushMatrix();
-		
-		GL11.glTranslated(x, y, z);
-		
-		Sphere sphere = new Sphere(50.0f, 100, 1000);
-		sphere.draw(50.0f, 100, 1000);
-		
-		GL11.glPopMatrix();
-		
-	}
-	
-	
-	public void addQuad(Quad quad){
-		quadList.add(quad);
-	}
-	
-	public void addQuads(List<Quad> quad){
-		quadList.addAll(quad);
-	}
-	
-	public List<Quad> getQuads(){
-		return quadList; 
-	}
-	
-	
-	public void addSphere(Sphere sphere){
-		
-	}
-	
-	public void addSpheres(List<Sphere> spheres){
-		sphereList.addAll(spheres);
 	}
 	
 	private static FloatBuffer asFloatBuffer(float [] floats){

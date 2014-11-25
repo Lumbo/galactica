@@ -2,6 +2,7 @@ package vehicles.parts;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import vehicles.Ship;
 import entity.BaseEntity;
 import graphics.Model;
 
@@ -14,22 +15,24 @@ public class Engine extends BaseEntity{
 	private double heatLimit;
 	private double damage;
 	
-	private final float maxThrottle = 1.1f;
+	private final float maxThrottle = 110.0f;
 	private final float minThrottle = 0.0f;
 	private float maxForce;
 	
 	private Vector3f forceDirection;
+	private Ship ship;
 	
 	public Engine(Model m){
 		super(m);
 		forceDirection = new Vector3f(0.0f, 0.0f, 0.0f);
 		System.out.println(forceDirection);
+		scale(0.5f);
+		setThrottle(42);
 	}
 	
 	public void setMaxForce(float force){
 		this.maxForce = force;
 	}
-	
 	
 	public void setThrottle(double percentage){
 		this.throttle = percentage;
@@ -56,8 +59,8 @@ public class Engine extends BaseEntity{
 	}
 	
 	public void increaseThrottle(){
-		if((throttle+0.02) < maxThrottle){
-			throttle += 0.02;	
+		if((throttle+0.5) < maxThrottle){
+			throttle += 0.5;	
 		}
 		else{
 			throttle = maxThrottle;
@@ -66,8 +69,8 @@ public class Engine extends BaseEntity{
 	}
 	
 	public void decreaseThrottle(){
-		if((throttle-0.02) > minThrottle){
-			throttle -= 0.02;	
+		if((throttle-0.5) > minThrottle){
+			throttle -= 0.5;	
 		}
 		else{
 			throttle = minThrottle;
@@ -86,5 +89,9 @@ public class Engine extends BaseEntity{
 	
 	public double getThrottle(){
 		return throttle;
+	}
+	
+	public void setShip(Ship s){
+		this.ship = s;
 	}
 }

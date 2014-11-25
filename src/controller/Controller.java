@@ -60,18 +60,21 @@ public class Controller {
 		    	gameWorld.getPlayer().getCurrentShip().decreaseThrottle();
 		    }
 		    
-			// Arrow keys
-			else if (Keyboard.getEventKey() == Keyboard.KEY_UP){
-				
-			}
-			else if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT){
+		    
+			// Arrow keys // Steer ship
+			if (Keyboard.getEventKey() == Keyboard.KEY_UP){
 				
 			}
 			else if (Keyboard.getEventKey() == Keyboard.KEY_DOWN){
 				
 			}
+			
+		    if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT){
+				gameWorld.getPlayer().getCurrentShip().turnRightDegrees(0.1f);
+			}
+			
 			else if (Keyboard.getEventKey() == Keyboard.KEY_LEFT){
-				
+				gameWorld.getPlayer().getCurrentShip().turnLeftDegrees(0.1f);
 			}
 		}
 	}
