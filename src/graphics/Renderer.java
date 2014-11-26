@@ -130,13 +130,12 @@ public class Renderer {
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), 0.001f, 10000);
+		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), 0.001f, 100000);
 		glMatrixMode(GL_MODELVIEW);
 		
 		
 		float position = -100f;
 		float rotationSpeed = 0.5f;
-		float rotation = 0.0f;
 		float lightRotation = 0.0f;
 		float lightRotationSpeed = 1.5f;
 		
@@ -144,7 +143,7 @@ public class Renderer {
 		FalconShip ship = null;
 		Light light = null;
 		try{
-			ship = new FalconShip(OBJLoader.getModel("res/models/ships/falcon/falcon6.obj"));
+			ship = new FalconShip(OBJLoader.getModel("res/models/ships/falcon/falcon7.obj"));
 			surface = OBJLoader.getModel("res/models/surface/flat.obj");
 			light = new Light(OBJLoader.getModel("res/models/light/lightbulb.obj"));
 			
@@ -238,10 +237,9 @@ public class Renderer {
 			pullController();
 			
 			
-			// Camera setting thingy
+			// Camera update
 			cam.useView();
 			
-			rotation += rotationSpeed;
 			lightRotation += lightRotationSpeed;
 			
 			for(int i=0; i<1; i++){
@@ -265,8 +263,6 @@ public class Renderer {
 				Display.destroy();
 				System.exit(0);
 			}
-			
-
 			
 			GL11.glEnd();
 			GL11.glPopMatrix();

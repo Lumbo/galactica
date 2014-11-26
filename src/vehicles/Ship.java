@@ -22,7 +22,7 @@ public class Ship extends BaseEntity {
 	private double mass;
 	private double energy;
 	private float yVelocity = 0;
-	private float rotationAngle = 0;
+	private float rotationSpeed = 0;
 	
 	private Vector3f resultantForce = new Vector3f(getPosition());
 	
@@ -40,34 +40,44 @@ public class Ship extends BaseEntity {
 				resultantForce.getX()+force.getX(), 
 				resultantForce.getY()+yVelocity, 
 				resultantForce.getZ()+force.getZ());
-		moveTo(resultantForce);	
-				
-		System.out.println("Falling speed: " + yVelocity);
-		System.out.println("YPos: " + resultantForce.getY());
+		moveTo(resultantForce);
 	}
 	
 	public void applyRotationReducer(){
-		float tmpRot = rotationAngle;
-		rotationAngle = getRotationAngle();
+		float rotationFactor = (float)((rotationSpeed)/(Math.log(mass)*7));
+		rotationSpeed -= rotationFactor;
+		rotate((float)(rotationSpeed), 0, 1, 0);
+//		System.out.println("Angle: " + getRotationAngle()
+//				+ " x: " + getRotateX()
+//				+ " y: " + getRotateY()
+//				+ " z: " + getRotateZ());
+//		
+//		System.out.println("Angle: " + getRotationAngle() 
+//				+ " anglex: " + getAngleVector().getX()
+//				+ " angley: " + getAngleVector().getY()
+//				+ " anglez: " + getAngleVector().getZ()
+//				+ " x: " + getRotateX()
+//				+ " y: " + getRotateY()
+//				+ " z: " + getRotateZ());
 		
-		System.out.println("Delta rotation " + (rotationAngle-tmpRot));
+	}
+	
+	public void applyTiltStabilizer(){
 		
-		/*if(getRotateY() > 0){
-			rotateStatic((float)(rotationAngle-(100000/mass)), 0, 1, 0);
-		}
-		else if(getRotateY() < 0){
-			rotateStatic((float)(rotationAngle+(100000/mass)), 0, 1, 0);
-		}*/
 	}
 	
-	public void turnLeftDegrees(float angle){
-		rotate((float)(angle), 0, 1f, 0);
+	public void turnDegrees(float angle){		
+		rotationSpeed += angle;
+		rotate(rotationSpeed, 0, 1, 0);
 	}
 	
-	public void turnRightDegrees(float angle){
-		rotate((float)(-angle), 0, 1f, 0);
+	public void tiltLeftRight(float angle){
+		
 	}
 	
+	public void tiltUpDown(float angle){
+		rotate(angle, 0, 0, 1);
+	}
 	
 	public void setShieldHitPoints(int shield){
 		this.shield = shield;
