@@ -77,27 +77,23 @@ public class Renderer {
 	
 	private Controller controller;
 	private GameWorld gameWorld;
+	private Camera cam;
 	
+	private static int fps;
 	private static double angle = 0;
 	
 	private static float zNear = 0.001f;
 	private static float zFar = 20000f;
-
-	private List<Quad> quadList = new ArrayList<Quad>();
-	private List<Sphere> sphereList = new ArrayList<Sphere>();
-
+	
     private static long lastFPS;
-	private static int fps;
     private static long lastFrame;
 	
     private boolean printFPS = true;
 	
-	private Camera cam;
-	
+    
 	public Renderer(GameWorld gameWorld, Controller controller) {
 		this.gameWorld = gameWorld;
 		this.controller = controller;
-		
 	}
 
 	
@@ -106,7 +102,6 @@ public class Renderer {
 		getFpsDelta();
 		lastFPS = getTime();
 		draw();
-		
 	}
 	
 	public void draw(){
@@ -158,7 +153,7 @@ public class Renderer {
 			ship.setName("Falcon");
 			gameWorld.getPlayer().addShipToPlayer(ship);
 			gameWorld.getPlayer().setActiveShip(ship);
-			ship.moveTo(1, 10, -10.0f);
+			ship.moveTo(1, 10, -50.0f);
 			
 		}catch (FileNotFoundException e){
 			e.printStackTrace();
@@ -259,7 +254,7 @@ public class Renderer {
 			}
 			
 			ship.applyRotationReducer();
-			ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
+			//ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
 			
 			// Spin the light around the ship
