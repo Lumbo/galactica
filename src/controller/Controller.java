@@ -63,18 +63,18 @@ public class Controller {
 		    
 			// Arrow keys // Steer ship
 			if (Keyboard.isKeyDown(Keyboard.KEY_UP)){
-				gameWorld.getPlayer().getCurrentShip().tiltUpDown(1f);
+				gameWorld.getPlayer().getCurrentShip().tiltUpDown(0.1f);
 			}
 			else if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)){
-				gameWorld.getPlayer().getCurrentShip().tiltUpDown(-1f);
+				gameWorld.getPlayer().getCurrentShip().tiltUpDown(-0.1f);
 			}
 			
 		    if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)){
-				gameWorld.getPlayer().getCurrentShip().turnDegrees(-0.1f);
+				gameWorld.getPlayer().getCurrentShip().turnDegrees(-0.01f);
 			}
 			
 			else if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
-				gameWorld.getPlayer().getCurrentShip().turnDegrees(0.1f);
+				gameWorld.getPlayer().getCurrentShip().turnDegrees(0.01f);
 			}
 		}
 	}

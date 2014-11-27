@@ -130,7 +130,7 @@ public class Renderer {
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), 0.001f, 100000);
+		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), zNear, zFar);
 		glMatrixMode(GL_MODELVIEW);
 		
 		
@@ -252,7 +252,7 @@ public class Renderer {
 			}
 			
 			ship.applyRotationReducer();
-			//ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
+			ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
 			
 			// Spin the light around the ship

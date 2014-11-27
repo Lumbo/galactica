@@ -21,6 +21,7 @@ public class Ship extends BaseEntity {
 	private double hullHitPoints;
 	private double mass;
 	private double energy;
+	private float distanceToSurface = 0;
 	private float yVelocity = 0;
 	private float rotationSpeed = 0;
 	
@@ -76,7 +77,7 @@ public class Ship extends BaseEntity {
 	}
 	
 	public void tiltUpDown(float angle){
-		rotate(angle, 0, 0, 1);
+		rotate(angle, 0, -1, 1);
 	}
 	
 	public void setShieldHitPoints(int shield){
