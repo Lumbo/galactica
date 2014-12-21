@@ -215,7 +215,7 @@ public class Renderer {
 		// Move away from the 0,0,0 position
 		cam.moveY(-10);
 		cam.moveX(1);
-		cam.moveZ(-10, 1);
+		cam.moveZ(-10);
 		
 		
 		while (!Display.isCloseRequested()){

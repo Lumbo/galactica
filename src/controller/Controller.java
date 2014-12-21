@@ -34,16 +34,16 @@ public class Controller {
 			    }
 			}
 		    if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-		    	gameWorld.getPlayerCamera().moveZ(0.2f, 1);
+		    	gameWorld.getPlayerCamera().moveZ(0.2f);
 		    }
 		    else if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-		        gameWorld.getPlayerCamera().moveZ(-0.2f, 1);
+		        gameWorld.getPlayerCamera().moveZ(-0.2f);
 		    }
 		    if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-		    	gameWorld.getPlayerCamera().moveZ(0.2f, 0);
+		    	gameWorld.getPlayerCamera().moveX(0.2f);
 		    }
 		    else if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-		    	gameWorld.getPlayerCamera().moveZ(-0.2f, 0);
+		    	gameWorld.getPlayerCamera().moveX(-0.2f);
 		    }
 	
 		    if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
@@ -84,10 +84,11 @@ public class Controller {
 	public void mousePoll(){
 		//Look over the horizontal line, x-axis
 		if(Mouse.isButtonDown(0)){
-			gameWorld.getPlayerCamera().rotateY((float)((getMouseDx()/30)*sensitivity));
-			
 			//Look up and down, y-axis
-			gameWorld.getPlayerCamera().rotateX((float)-((getMouseDy()/30)*sensitivity));
+			//gameWorld.getPlayerCamera().rotateX((float)-((getMouseDy()/500)*sensitivity));
+			gameWorld.getPlayerCamera().moveZ((float)((getMouseDy()/20)*sensitivity));
+			gameWorld.getPlayerCamera().rotateRelativeY((float)(-(getMouseDx()/1000)*sensitivity));
+			
 			
 			if (getMouseDy()!=0){
 				System.out.println("Moving Y-wise: " + getMouseDy());
