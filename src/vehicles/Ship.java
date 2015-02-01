@@ -1,8 +1,12 @@
 package vehicles;
 
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import physics.Physics;
@@ -17,12 +21,18 @@ public class Ship extends BaseEntity {
 	
 	private String name;
 	
+	private boolean isHovering = true;
 	private double shield;
 	private double hullHitPoints;
 	private double mass;
 	private double energy;
 	private float yVelocity = 0;
 	private float rotationSpeed = 0;
+	private float tiltSpeed = 0;
+	private float rx = 0;
+	private float ry = 0;
+	private float rz = 0;
+	
 	
 	private Vector3f resultantForce = new Vector3f(getPosition());
 	
@@ -66,17 +76,22 @@ public class Ship extends BaseEntity {
 		
 	}
 	
-	public void turnDegrees(float angle){		
+	public void turnDegrees(float angle){
 		rotationSpeed += angle;
-		rotate(rotationSpeed, 0, 1, 0);
+		rotate(rotationSpeed, -(float)Math.sin(getRotateZ()), (float)Math.cos(getRotateZ()), 0);
+		//rotate(rotationSpeed, (float)Math.sin(getRotationAngle()), (float)Math.cos(rotationSpeed), 0);
 	}
 	
 	public void tiltLeftRight(float angle){
 		
 	}
 	
+	public void setHover(boolean hover){
+		isHovering = hover;
+	}
+	
 	public void tiltUpDown(float angle){
-		rotate(angle, 0, 0, 1);
+		setRotationAngleX(angle);
 	}
 	
 	public void setShieldHitPoints(int shield){
@@ -97,6 +112,25 @@ public class Ship extends BaseEntity {
 	
 	public void addEngines(List<Engine> engines){
 		this.engines = engines; 
+	}
+	
+	public void helpSystems(){	
+		if(isHovering){
+			float currentThrottle = engines.get(0).getThrottle();
+//			System.out.println("Current throttle: " + currentThrottle);
+//			System.out.println("Current y-velocity: " + yVelocity);
+//			System.out.println("New throttle level: " + (currentThrottle-(float)(yVelocity*10)));
+			
+			if(yVelocity!=0){
+				setThrottle(currentThrottle-(float)(1/(yVelocity)));	
+			}
+		}
+	}
+	
+	private void setThrottle(float throttle){
+		for(Engine e : getEngines()){
+			e.setThrottle(throttle);
+		}
 	}
 	
 	public void increaseThrottle(){
@@ -139,6 +173,10 @@ public class Ship extends BaseEntity {
 	
 	public List<Engine> getEngines(){
 		return engines;
+	}
+	
+	public boolean isHovering(){
+		return isHovering;
 	}
 	
 	

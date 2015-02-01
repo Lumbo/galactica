@@ -32,6 +32,16 @@ public class Controller {
 			    if(Keyboard.isKeyDown(Keyboard.KEY_L)){
 			    	gameWorld.isWorldRepresentedAsLines(!gameWorld.isWorldRepresentedAsLines());
 			    }
+			    if(Keyboard.isKeyDown(Keyboard.KEY_H)){
+			    	Ship ship = gameWorld.getPlayer().getCurrentShip();
+			    	ship.setHover(!ship.isHovering());
+			    	if(ship.isHovering()){
+			    		System.out.println("Hovering system activated");	
+			    	}
+			    	else{
+			    		System.out.println("Hovering system deactivated");
+			    	}
+			    }
 			}
 		    if(Keyboard.isKeyDown(Keyboard.KEY_W)){
 		    	gameWorld.getPlayerCamera().moveZ(0.2f, 1);
@@ -63,16 +73,15 @@ public class Controller {
 		    
 			// Arrow keys // Steer ship
 			if (Keyboard.isKeyDown(Keyboard.KEY_UP)){
-				gameWorld.getPlayer().getCurrentShip().tiltUpDown(1f);
+				gameWorld.getPlayer().getCurrentShip().tiltUpDown(0.1f);
 			}
 			else if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)){
-				gameWorld.getPlayer().getCurrentShip().tiltUpDown(-1f);
+				gameWorld.getPlayer().getCurrentShip().tiltUpDown(-0.1f);
 			}
 			
 		    if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)){
 				gameWorld.getPlayer().getCurrentShip().turnDegrees(-0.1f);
 			}
-			
 			else if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
 				gameWorld.getPlayer().getCurrentShip().turnDegrees(0.1f);
 			}

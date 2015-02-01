@@ -10,14 +10,12 @@ public class Engine extends BaseEntity{
 	
 	private boolean isActive;
 	
-	private double throttle;
-	private double currentHeat;
-	private double heatLimit;
-	private double damage;
-	
 	private final float maxThrottle = 110.0f;
 	private final float minThrottle = 0.0f;
+	private float currentHeat;
+	private float heatLimit;
 	private float maxForce;
+	private float throttle;
 	
 	private Vector3f forceDirection;
 	private Ship ship;
@@ -34,8 +32,16 @@ public class Engine extends BaseEntity{
 		this.maxForce = force;
 	}
 	
-	public void setThrottle(double percentage){
-		this.throttle = percentage;
+	public void setThrottle(float percentage){
+		if(percentage>maxThrottle){
+			percentage = maxThrottle;
+		}
+		else if(percentage<minThrottle){
+			percentage = minThrottle;
+		}
+		else{
+			this.throttle = percentage;	
+		}
 		
 		float effectiveForce = (float) ((throttle/100)*maxForce);
 
@@ -46,7 +52,7 @@ public class Engine extends BaseEntity{
 		System.out.println(forceDirection);
 	}
 	
-	public void setHeat(double heat){
+	public void setHeat(float heat){
 		this.currentHeat = heat;
 		if (currentHeat>=heatLimit){
 			overHeatWarning();
@@ -87,7 +93,7 @@ public class Engine extends BaseEntity{
 		return forceDirection;
 	}
 	
-	public double getThrottle(){
+	public float getThrottle(){
 		return throttle;
 	}
 	

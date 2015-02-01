@@ -9,11 +9,10 @@ import graphics.Model;
 public class BaseEntity {
 	private float position_x, position_y, position_z;
 	private float rotation_x, rotation_y, rotation_z;
-	private float angle_x = 1, angle_y = 1, angle_z = 1;
+	private float rx = 1, ry = 1, rz = 1;
 	private float scale = 1;
 	private float rotationAngle = 1;
 	private Model model;
-	private Vector3f test;
 	
 	
 	public BaseEntity(Model m){
@@ -37,13 +36,13 @@ public class BaseEntity {
 	public void rotate(float angle, float x, float y, float z){
 		setRotationAngle(angle);
 		if(x!=0){
-			angle_x = angle;
+			rx = angle;
 		}
 		else if(y!=0){
-			angle_y = angle;
+			ry = angle;
 		}
 		else if(z!=0){
-			angle_z = angle;
+			rz = angle;
 		}
 		rotateX(x);
 		rotateY(y);
@@ -67,18 +66,16 @@ public class BaseEntity {
 	}
 	
 	public void setRotationAngleX(float angle){
-		this.angle_x += angle;
+		this.rx += angle;
 	}
 	
 	public void setRotationAngleY(float angle){
-		this.angle_y += angle;
+		this.ry += angle;
 	}
 	
 	public void setRotationAngleZ(float angle){
-		this.angle_z += angle;
+		this.rz += angle;
 	}
-	
-	
 	
 	public void resetXZY(){
 		this.rotation_x = 0;
@@ -130,7 +127,7 @@ public class BaseEntity {
 	}
 	
 	public Vector3f getAngleVector(){
-		return new Vector3f(angle_x, angle_y, angle_z);
+		return new Vector3f(rx, ry, rz);
 	}
 	
 	public Vector3f getPosition(){
