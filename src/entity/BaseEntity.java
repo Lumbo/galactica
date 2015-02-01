@@ -83,7 +83,6 @@ public class BaseEntity {
 		this.rotation_z = 0;
 	}
 	
-	
 	public void draw(){
 		glPushMatrix();
 		org.lwjgl.opengl.GL11.

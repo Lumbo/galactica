@@ -2,22 +2,6 @@ package graphics;
 
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_BACK;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_FRONT;
-import static org.lwjgl.opengl.GL11.GL_LIGHT0;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_SMOOTH;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
@@ -32,6 +16,7 @@ import static org.lwjgl.opengl.GL20.glValidateProgram;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 //import BjornMain;
+
 
 
 
@@ -58,6 +43,7 @@ import org.newdawn.slick.opengl.GLUtils;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import physics.Physics;
 import vehicles.ships.FalconShip;
 import world.GameWorld;
 import controller.Camera;
@@ -70,27 +56,23 @@ public class Renderer {
 	
 	private Controller controller;
 	private GameWorld gameWorld;
+	private Camera cam;
 	
+	private static int fps;
 	private static double angle = 0;
 	
 	private static float zNear = 0.001f;
 	private static float zFar = 20000f;
-
-	private List<Quad> quadList = new ArrayList<Quad>();
-	private List<Sphere> sphereList = new ArrayList<Sphere>();
-
+	
     private static long lastFPS;
-	private static int fps;
     private static long lastFrame;
 	
     private boolean printFPS = true;
 	
-	private Camera cam;
-	
+    
 	public Renderer(GameWorld gameWorld, Controller controller) {
 		this.gameWorld = gameWorld;
 		this.controller = controller;
-		
 	}
 
 	
@@ -99,7 +81,6 @@ public class Renderer {
 		getFpsDelta();
 		lastFPS = getTime();
 		draw();
-		
 	}
 	
 	public void draw(){
@@ -127,7 +108,7 @@ public class Renderer {
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), 0.001f, 100000);
+		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), zNear, zFar);
 		glMatrixMode(GL_MODELVIEW);
 		
 		
@@ -150,7 +131,7 @@ public class Renderer {
 			ship.setName("Falcon");
 			gameWorld.getPlayer().addShipToPlayer(ship);
 			gameWorld.getPlayer().setActiveShip(ship);
-			ship.moveTo(1, 10, -10.0f);
+			ship.moveTo(1, 10, -50.0f);
 			
 		}catch (FileNotFoundException e){
 			e.printStackTrace();
@@ -250,6 +231,8 @@ public class Renderer {
 			}
 			
 			ship.applyRotationReducer();
+			
+			ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
 			
 			// Print the plane-axis for the ship

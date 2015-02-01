@@ -102,5 +102,4 @@ public class FalconShip extends Ship {
 		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
 		glPopMatrix();
 	}
-
 }
