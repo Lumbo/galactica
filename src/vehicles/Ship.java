@@ -69,7 +69,7 @@ public class Ship extends BaseEntity {
 	
 	public void turnDegrees(float angle){		
 		rotationSpeed += angle;
-		rotate(rotationSpeed, 0, 1, 0);
+		rotate(1, 0, rotationSpeed, 0);
 	}
 	
 	public void tiltLeftRight(float angle){
@@ -77,7 +77,8 @@ public class Ship extends BaseEntity {
 	}
 	
 	public void tiltUpDown(float angle){
-		rotate(angle, 0, -1, 1);
+		rotate(1, 0, getRotateY(), angle);
+		
 	}
 	
 	public void setShieldHitPoints(int shield){

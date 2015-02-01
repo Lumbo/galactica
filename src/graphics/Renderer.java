@@ -252,7 +252,7 @@ public class Renderer {
 			}
 			
 			ship.applyRotationReducer();
-			ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
+			//ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
 			
 			// Spin the light around the ship
