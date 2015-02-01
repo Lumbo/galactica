@@ -1,8 +1,17 @@
 package vehicles;
 
+import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glVertex3f;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import physics.Physics;
@@ -17,6 +26,7 @@ public class Ship extends BaseEntity {
 	
 	private String name;
 	
+	private boolean isHovering = true;
 	private double shield;
 	private double hullHitPoints;
 	private double mass;
@@ -24,6 +34,11 @@ public class Ship extends BaseEntity {
 	private float distanceToSurface = 0;
 	private float yVelocity = 0;
 	private float rotationSpeed = 0;
+	private float tiltSpeed = 0;
+	private float rx = 0;
+	private float ry = 0;
+	private float rz = 0;
+	
 	
 	private Vector3f resultantForce = new Vector3f(getPosition());
 	
@@ -36,30 +51,20 @@ public class Ship extends BaseEntity {
 	}
 
 	public void applyForce(Vector3f force){
+		movementReducer();
 		yVelocity += force.getY();
 		resultantForce.set(
 				resultantForce.getX()+force.getX(), 
 				resultantForce.getY()+yVelocity, 
 				resultantForce.getZ()+force.getZ());
 		moveTo(resultantForce);
+		
 	}
 	
 	public void applyRotationReducer(){
 		float rotationFactor = (float)((rotationSpeed)/(Math.log(mass)*7));
 		rotationSpeed -= rotationFactor;
 		rotate((float)(rotationSpeed), 0, 1, 0);
-//		System.out.println("Angle: " + getRotationAngle()
-//				+ " x: " + getRotateX()
-//				+ " y: " + getRotateY()
-//				+ " z: " + getRotateZ());
-//		
-//		System.out.println("Angle: " + getRotationAngle() 
-//				+ " anglex: " + getAngleVector().getX()
-//				+ " angley: " + getAngleVector().getY()
-//				+ " anglez: " + getAngleVector().getZ()
-//				+ " x: " + getRotateX()
-//				+ " y: " + getRotateY()
-//				+ " z: " + getRotateZ());
 		
 	}
 	
@@ -67,13 +72,19 @@ public class Ship extends BaseEntity {
 		
 	}
 	
-	public void turnDegrees(float angle){		
+	public void turnDegrees(float angle){
 		rotationSpeed += angle;
 		rotate(1, 0, rotationSpeed, 0);
+		//rotate(rotationSpeed, -(float)Math.sin(getRotateZ()), (float)Math.cos(getRotateZ()), 0);
+
 	}
 	
 	public void tiltLeftRight(float angle){
 		
+	}
+	
+	public void setHover(boolean hover){
+		isHovering = hover;
 	}
 	
 	public void tiltUpDown(float angle){
@@ -99,6 +110,44 @@ public class Ship extends BaseEntity {
 	
 	public void addEngines(List<Engine> engines){
 		this.engines = engines; 
+	}
+	
+	public void helpSystems(){	
+		if(isHovering){
+			float currentThrottle = engines.get(0).getThrottle();
+			
+			float resultThrottlePercentage = (float) (-getMass()*yVelocity/(engines.get(0).getMaxForce()*4));		
+			System.out.println("Percentage throttle: " + resultThrottlePercentage);
+			setThrottle(resultThrottlePercentage);
+			
+			System.out.println("Current throttle: " + currentThrottle);
+			
+//			System.out.println("Current throttle: " + currentThrottle);
+//			System.out.println("Current y-velocity: " + yVelocity);
+//			System.out.println("New throttle level: " + (currentThrottle-(float)(yVelocity*10)));
+//			
+//			if(yVelocity!=0){
+//				setThrottle(currentThrottle-(float)(1/(yVelocity)));	
+//			}
+		}
+	}
+	
+	public void movementReducer(){
+		float slowFactor = (float) (yVelocity/getMass()*1000);
+		if(yVelocity < 0){
+			yVelocity = yVelocity + slowFactor;
+		}
+		else {
+			yVelocity = yVelocity - slowFactor;
+		}
+		
+		System.out.println("Slowfactor " + slowFactor);
+	}
+	
+	private void setThrottle(float throttle){
+		for(Engine e : getEngines()){
+			e.setThrottle(throttle);
+		}
 	}
 	
 	public void increaseThrottle(){
@@ -143,5 +192,40 @@ public class Ship extends BaseEntity {
 		return engines;
 	}
 	
+	public boolean isHovering(){
+		return isHovering;
+	}
+	
+	public void printDebugVectors(){
+		//printAxis();
+		printResultantForceVectors();
+	}
+	
+	public void printAxis(){
+		glPushMatrix();
+		glBegin(GL_LINES);
+		int lineLength = 50;
+		glColor3f(255, 0, 0);
+		glVertex3f(getPositionX(), getPositionY(), getPositionZ());
+		glVertex3f(getPositionX()+lineLength, getPositionY(), getPositionZ());
+		glColor3f(0, 255, 0);
+		glVertex3f(getPositionX(), getPositionY(), getPositionZ());
+		glVertex3f(getPositionX(), getPositionY()+lineLength, getPositionZ());
+		glColor3f(0, 0, 255);
+		glVertex3f(getPositionX(), getPositionY(), getPositionZ());
+		glVertex3f(getPositionX(), getPositionY(), getPositionZ()+lineLength);
+		glEnd();
+		glPopMatrix();
+	}
+	
+	public void printResultantForceVectors(){
+		glPushMatrix();
+		glBegin(GL_LINES);
+		glColor3f(255, 0, 0);
+		glVertex3f(getPositionX(), getPositionY(), getPositionZ());
+		glVertex3f(getPositionX(), getPositionY()+yVelocity*100, getPositionZ());
+		glEnd();
+		glPopMatrix();
+	}
 	
 }

@@ -1,33 +1,7 @@
 package graphics;
 
 
-import static org.lwjgl.opengl.GL11.GL_BACK;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_FRONT;
-import static org.lwjgl.opengl.GL11.GL_LIGHT0;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_SMOOTH;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColorMaterial;
-import static org.lwjgl.opengl.GL11.glCullFace;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glLightModel;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glShadeModel;
-import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
@@ -40,7 +14,11 @@ import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glValidateProgram;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
+
 //import BjornMain;
+
+
+
 
 
 import java.io.BufferedReader;
@@ -59,8 +37,9 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.opengl.GLUtils;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -110,7 +89,7 @@ public class Renderer {
 			Display.setTitle("Galactica");
 			Display.create();
 			
-			System.out.println("Opengl version is " + GL11.glGetString(GL11.GL_VERSION));
+			System.out.println("Opengl version is " + glGetString(GL_VERSION));
 		} catch (LWJGLException e){
 			e.printStackTrace();
 		}
@@ -119,7 +98,7 @@ public class Renderer {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
-		glEnable(GL11.GL_LIGHT1);
+		glEnable(GL_LIGHT1);
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[] {0.2f, 0.2f, 0.2f, 1.0f}));
 		glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[] {1.55f, 1.5f, 1.55f, 1f}));
 		glEnable(GL_CULL_FACE);
@@ -127,11 +106,11 @@ public class Renderer {
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		
-		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), zNear, zFar);
 		glMatrixMode(GL_MODELVIEW);
+		
 		
 		
 		float position = -100f;
@@ -143,7 +122,7 @@ public class Renderer {
 		FalconShip ship = null;
 		Light light = null;
 		try{
-			ship = new FalconShip(OBJLoader.getModel("res/models/ships/falcon/falcon7.obj"));
+			ship = new FalconShip(OBJLoader.getModel("res/models/ships/falcon/falcon8.obj"));
 			surface = OBJLoader.getModel("res/models/surface/flat.obj");
 			light = new Light(OBJLoader.getModel("res/models/light/lightbulb.obj"));
 			
@@ -210,7 +189,7 @@ public class Renderer {
 		glLinkProgram(shaderProgram);
 		glValidateProgram(shaderProgram);
 		
-		glLight(GL11.GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{0.1f, 0.1f, 0.1f, 1.0f}));
+		glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{0.1f, 0.1f, 0.1f, 1.0f}));
 		
 		// Move away from the 0,0,0 position
 		cam.moveY(-10);
@@ -224,14 +203,14 @@ public class Renderer {
 			
 			// Make it possible to see the lines by pressing L
 			if(gameWorld.isWorldRepresentedAsLines()){
-				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			}
 			else{
-				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			}
 			
 			glLoadIdentity();
-			GL11.glPushMatrix();
+			glPushMatrix();
 			
 			// Pull controller input
 			pullController();
@@ -243,17 +222,22 @@ public class Renderer {
 			lightRotation += lightRotationSpeed;
 			
 			for(int i=0; i<1; i++){
-				GL11.glPushMatrix();
+				glPushMatrix();
 				glTranslatef(1, -10, position);
 				glRotatef(0, 1, 1, 0);
-				GL11.glScalef(20, 20, 20);
+				glScalef(20, 20, 20);
 				surface.draw();
-				GL11.glPopMatrix();
+				glPopMatrix();
 			}
 			
 			ship.applyRotationReducer();
+
 			//ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
+			
+			// Print the plane-axis for the ship
+			ship.printDebugVectors();
+			
 			
 			// Spin the light around the ship
 			light.moveTo((float)-Math.sin(lightRotation/100)*50, 20, ((float)Math.cos(lightRotation/100)*50)-100);
@@ -264,8 +248,8 @@ public class Renderer {
 				System.exit(0);
 			}
 			
-			GL11.glEnd();
-			GL11.glPopMatrix();
+			glEnd();
+			glPopMatrix();
 			
 			Display.update();
 			Display.sync(60);
@@ -275,6 +259,7 @@ public class Renderer {
 			}
 		}
 		Display.destroy();
+		System.exit(0);
 	}
 
 	
