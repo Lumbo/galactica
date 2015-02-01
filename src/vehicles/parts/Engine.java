@@ -49,7 +49,6 @@ public class Engine extends BaseEntity{
 				(float)(0), 
 				(float)(effectiveForce), 
 				(float)(0));
-		System.out.println(forceDirection);
 	}
 	
 	public void setHeat(float heat){

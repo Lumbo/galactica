@@ -232,24 +232,12 @@ public class Renderer {
 			
 			ship.applyRotationReducer();
 			
-			ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
+			//ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
 			
 			// Print the plane-axis for the ship
-			glPushMatrix();
-			glBegin(GL_LINES);
-			int lineLength = 50;
-			glColor3f(255, 0, 0);
-			glVertex3f(ship.getPositionX(), ship.getPositionY(), ship.getPositionZ());
-			glVertex3f(ship.getPositionX()+lineLength, ship.getPositionY(), ship.getPositionZ());
-			glColor3f(0, 255, 0);
-			glVertex3f(ship.getPositionX(), ship.getPositionY(), ship.getPositionZ());
-			glVertex3f(ship.getPositionX(), ship.getPositionY()+lineLength, ship.getPositionZ());
-			glColor3f(0, 0, 255);
-			glVertex3f(ship.getPositionX(), ship.getPositionY(), ship.getPositionZ());
-			glVertex3f(ship.getPositionX(), ship.getPositionY(), ship.getPositionZ()+lineLength);
-			glEnd();
-			glPopMatrix();
+			ship.printDebugVectors();
+			
 			
 			// Spin the light around the ship
 			light.moveTo((float)-Math.sin(lightRotation/100)*50, 20, ((float)Math.cos(lightRotation/100)*50)-100);

@@ -35,7 +35,7 @@ public class FalconShip extends Ship {
 			if(i == 1 || i == 3){
 				engine.rotate(180, 0, 1, 0);
 			}
-			engine.setThrottle(0f);
+			//engine.setThrottle(82f);
 			engineList.add(engine);
 		}
 		addEngines(engineList);
