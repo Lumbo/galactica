@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import util.Quat4f;
 import graphics.Model;
 
 public class BaseEntity {
@@ -13,7 +14,7 @@ public class BaseEntity {
 	private float scale = 1;
 	private float rotationAngle = 1;
 	private Model model;
-	
+	private Quat4f quat4f = new Quat4f();
 	
 	public BaseEntity(Model m){
 		this.model = m;
@@ -34,19 +35,25 @@ public class BaseEntity {
 	}
 	
 	public void rotate(float angle, float x, float y, float z){
-		setRotationAngle(angle);
-		if(x!=0){
-			rx = angle;
-		}
-		else if(y!=0){
-			ry = angle;
-		}
-		else if(z!=0){
-			rz = angle;
-		}
-		rotateX(x);
-		rotateY(y);
-		rotateZ(z);
+		
+		quat4f = new Quat4f(angle, x, y, z);
+		
+		
+		
+		//		rotateX(x);
+//		rotateY(y);
+//		rotateZ(z);
+//		setRotationAngle(angle);
+//		if(x!=0){
+//			rx = angle;
+//		}
+//		else if(y!=0){
+//			ry = angle;
+//		}
+//		else if(z!=0){
+//			rz = angle;
+//		}
+		
 	}
 	
 	public void rotateX(float r){
@@ -87,7 +94,8 @@ public class BaseEntity {
 		glPushMatrix();
 		org.lwjgl.opengl.GL11.
 		glTranslatef(position_x, position_y, position_z);
-		glRotatef(rotationAngle, rotation_x, rotation_y, rotation_z);
+		//glRotatef(rotationAngle, rotation_x, rotation_y, rotation_z);
+		glRotatef(quat4f.getW(), quat4f.getX(), quat4f.getY(), quat4f.getZ());
 		glScalef(scale, scale, scale);
 		this.model.draw();
 		glPopMatrix();

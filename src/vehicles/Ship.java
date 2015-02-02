@@ -58,7 +58,6 @@ public class Ship extends BaseEntity {
 				resultantForce.getY()+yVelocity, 
 				resultantForce.getZ()+force.getZ());
 		moveTo(resultantForce);
-		
 	}
 	
 	public void applyRotationReducer(){
@@ -73,10 +72,17 @@ public class Ship extends BaseEntity {
 	}
 	
 	public void turnDegrees(float angle){
+		
+		
+		
 		rotationSpeed += angle;
-		rotate(1, 0, rotationSpeed, 0);
-		//rotate(rotationSpeed, -(float)Math.sin(getRotateZ()), (float)Math.cos(getRotateZ()), 0);
-
+		rotate(rotationSpeed, getRotateX(), angle, getRotateZ());
+	}
+	
+	public void tiltUpDown(float angle){
+		rotationSpeed += angle;
+		rotate((float)angle, 0, 0, -1);
+		
 	}
 	
 	public void tiltLeftRight(float angle){
@@ -85,11 +91,6 @@ public class Ship extends BaseEntity {
 	
 	public void setHover(boolean hover){
 		isHovering = hover;
-	}
-	
-	public void tiltUpDown(float angle){
-		rotate(1, 0, getRotateY(), angle);
-		
 	}
 	
 	public void setShieldHitPoints(int shield){
@@ -117,18 +118,7 @@ public class Ship extends BaseEntity {
 			float currentThrottle = engines.get(0).getThrottle();
 			
 			float resultThrottlePercentage = (float) (-getMass()*yVelocity/(engines.get(0).getMaxForce()*4));		
-			System.out.println("Percentage throttle: " + resultThrottlePercentage);
 			setThrottle(resultThrottlePercentage);
-			
-			System.out.println("Current throttle: " + currentThrottle);
-			
-//			System.out.println("Current throttle: " + currentThrottle);
-//			System.out.println("Current y-velocity: " + yVelocity);
-//			System.out.println("New throttle level: " + (currentThrottle-(float)(yVelocity*10)));
-//			
-//			if(yVelocity!=0){
-//				setThrottle(currentThrottle-(float)(1/(yVelocity)));	
-//			}
 		}
 	}
 	
@@ -140,8 +130,6 @@ public class Ship extends BaseEntity {
 		else {
 			yVelocity = yVelocity - slowFactor;
 		}
-		
-		System.out.println("Slowfactor " + slowFactor);
 	}
 	
 	private void setThrottle(float throttle){
@@ -197,7 +185,7 @@ public class Ship extends BaseEntity {
 	}
 	
 	public void printDebugVectors(){
-		//printAxis();
+		printAxis();
 		printResultantForceVectors();
 	}
 	
