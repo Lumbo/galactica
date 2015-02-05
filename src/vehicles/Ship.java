@@ -34,10 +34,6 @@ public class Ship extends BaseEntity {
 	private float distanceToSurface = 0;
 	private float yVelocity = 0;
 	private float rotationSpeed = 0;
-	private float tiltSpeed = 0;
-	private float rx = 0;
-	private float ry = 0;
-	private float rz = 0;
 	
 	
 	private Vector3f resultantForce = new Vector3f(getPosition());
@@ -72,21 +68,15 @@ public class Ship extends BaseEntity {
 	}
 	
 	public void turnDegrees(float angle){
-		
-		rotationSpeed += angle / 10;
+		System.out.println("turn");
+		rotationSpeed += angle / 100;
 		rotate(rotationSpeed, 0, 1, 0);
-		
-		System.out.println("x " + getRotateX());
-		System.out.println("y " + getRotateY());
-		System.out.println("z " + getRotateZ());
 	}
 	
 	public void tiltUpDown(float angle){
-		rotationSpeed += angle;
-		rotate((float)rotationSpeed, 0, 0, -1);
-		System.out.println("x " + getRotateX());
-		System.out.println("y " + getRotateY());
-		System.out.println("z " + getRotateZ());
+		System.out.println("up/down");
+		rotationSpeed += angle / 100;
+		rotate(rotationSpeed, 0, 0, -1);
 		
 	}
 	
@@ -216,7 +206,7 @@ public class Ship extends BaseEntity {
 		glBegin(GL_LINES);
 		glColor3f(255, 0, 0);
 		glVertex3f(getPositionX(), getPositionY(), getPositionZ());
-		glVertex3f(getPositionX(), getPositionY()+yVelocity*100, getPositionZ());
+		glVertex3f(getPositionX(), getPositionY()+yVelocity*1000, getPositionZ());
 		glEnd();
 		glPopMatrix();
 	}

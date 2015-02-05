@@ -21,6 +21,7 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,6 +56,7 @@ import controller.Controller;
 import entity.Light;
 import entity.Quad;
 import entity.Sphere;
+import entity.Surface;
 
 public class Renderer {
 	
@@ -157,19 +159,12 @@ public class Renderer {
 		gluPerspective((float) 70, Display.getWidth()/Display.getHeight(), zNear, zFar);
 		glMatrixMode(GL_MODELVIEW);
 		
-		
-		
-		float position = -100f;
-		float rotationSpeed = 0.5f;
-		float lightRotation = 0.0f;
-		float lightRotationSpeed = 1.5f;
-		
-		Model surface = null;
+		Surface surface = null;
 		FalconShip ship = null;
 		Light light = null;
 		try{
 			ship = new FalconShip(OBJLoader.getModel("res/models/ships/falcon/falcon8.obj"));
-			surface = OBJLoader.getModel("res/models/surface/flat.obj");
+			surface = new Surface(OBJLoader.getModel("res/models/surface/flat.obj"));
 			light = new Light(OBJLoader.getModel("res/models/light/lightbulb.obj"));
 			
 			
@@ -264,40 +259,24 @@ public class Renderer {
 			
 			Matrix4f res = new Matrix4f();
 			
-			lightRotation += lightRotationSpeed;
-	
-			Matrix4f hej = new Matrix4f();
-				hej.setIdentity();
-			// Camera update
-			Matrix4f.mul(cam.viewMatrix, hej, res);
-			useView(res);
-			
-			for(int i=0; i<1; i++){
-				glPushMatrix();
-				glTranslatef(1, -10, position);
-				glRotatef(0, 1, 1, 0);
-				glScalef(20, 20, 20);
-				surface.draw();
-				glPopMatrix();
-			}
-			
-//			ship.applyRotationReducer();
 
-			// Camera update
-			Matrix4f.mul(cam.viewMatrix, ship.viewMatrix, res);
+	
+			// Surface update
+			Matrix4f.mul(cam.viewMatrix, surface.getViewMatrix(), res);
 			useView(res);
+			surface.draw();
 			
-			//ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
-			ship.draw();
+			// Light update
+			Matrix4f.mul(cam.viewMatrix, light.getViewMatrix(), res);
+			light.drawSpotLight();
 			
-			
+			// Ship update
+			Matrix4f.mul(cam.viewMatrix, ship.getViewMatrix(), res);
+			useView(res);
 			// Print the plane-axis for the ship
 			ship.printDebugVectors();
+			ship.draw();
 			
-			
-			// Spin the light around the ship
-			light.moveTo((float)-Math.sin(lightRotation/100)*50, 20, ((float)Math.cos(lightRotation/100)*50)-100);
-			light.drawSpotLight();
 			
 			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 				Display.destroy();

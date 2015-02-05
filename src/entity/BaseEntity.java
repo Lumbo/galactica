@@ -21,7 +21,8 @@ public class BaseEntity {
 	private float rotationAngle = 1;
 	private Model model;
 	private Quat4f quat4f = new Quat4f();
-	public Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f previousMatrix4f = new Matrix4f();
 	
 	
 	public BaseEntity(Model m){
@@ -45,7 +46,7 @@ public class BaseEntity {
 	public void rotate(float angle, float x, float y, float z){
 		
 		quat4f = new Quat4f(angle, x, y, z);
-		float[][] rotMat = quat4f.derp(angle, new Vector3f(x, y, z));
+		float[][] rotMat = quat4f.getRotationMatrix(angle, new Vector3f(x, y, z));
 		
 		viewMatrix.setIdentity();
 		
@@ -61,17 +62,15 @@ public class BaseEntity {
 		viewMatrix.m21 = rotMat[2][1];
 		viewMatrix.m22 = rotMat[2][2];
 		
+		System.out.println("Angle: " + quat4f.getW());
 		System.out.println("[" + rotMat[0][0] + ", " + rotMat[0][1] + ", " + rotMat[0][2] + ", " + viewMatrix.m03 + "]");
 		System.out.println("[" + rotMat[1][0] + ", " + rotMat[1][1] + ", " + rotMat[1][2] + ", " + viewMatrix.m13 + "]");
 		System.out.println("[" + rotMat[2][0] + ", " + rotMat[2][1] + ", " + rotMat[2][2] + ", " + viewMatrix.m23 + "]");
 		System.out.println("[" + viewMatrix.m30 + ", " + viewMatrix.m31 + ", " + viewMatrix.m32 + ", " + viewMatrix.m33 + "]\n");
 		
-		
-		
-		
-//		rotateY(tempx * rotMat[1][0] + tempy * rotMat[1][1] + tempz * rotMat[1][2]);
-//		rotateZ(tempx * rotMat[2][0] + tempy * rotMat[2][1] + tempz * rotMat[2][2]);
-		
+		rotateX(quat4f.getX());
+		rotateY(quat4f.getY());
+		rotateZ(quat4f.getZ());
 	}
 	
 	public void rotateX(float r){
@@ -112,8 +111,6 @@ public class BaseEntity {
 		glPushMatrix();
 		
 		org.lwjgl.opengl.GL11.glTranslatef(position_x, position_y, position_z);
-		//glRotatef(rotationAngle, rotation_x, rotation_y, rotation_z);
-		//glScalef(scale, scale, scale);
 		this.model.draw();
 		glPopMatrix();
 	}
@@ -156,6 +153,10 @@ public class BaseEntity {
 	
 	public Vector3f getPosition(){
 		return new Vector3f(position_x, position_y, position_z);
+	}
+	
+	public Matrix4f getViewMatrix(){
+		return viewMatrix;
 	}
 	
 	private FloatBuffer createFloatBuffer(int size) {

@@ -73,10 +73,10 @@ public class Controller {
 		    
 			// Arrow keys // Steer ship
 			if (Keyboard.isKeyDown(Keyboard.KEY_UP)){
-				gameWorld.getPlayer().getCurrentShip().tiltUpDown(0.1f);
+				gameWorld.getPlayer().getCurrentShip().tiltUpDown(1f);
 			}
 			else if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)){
-				gameWorld.getPlayer().getCurrentShip().tiltUpDown(-0.1f);
+				gameWorld.getPlayer().getCurrentShip().tiltUpDown(-1f);
 			}
 			
 		    if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)){

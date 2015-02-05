@@ -35,6 +35,7 @@ public class FalconShip extends Ship {
 			if(i == 1 || i == 3){
 				engine.rotate(180, 0, 1, 0);
 			}
+			engine.setThrottle(0);
 			engineList.add(engine);
 		}
 		addEngines(engineList);
@@ -73,8 +74,6 @@ public class FalconShip extends Ship {
 		}
 		glPushMatrix();
 		glTranslatef(getPositionX(), getPositionY(), getPositionZ());
-		//glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
-		//glScalef(2, 2, 2);
 
 		Vector3f forceVector;
 		for(Engine e : getEngines()){
@@ -84,8 +83,6 @@ public class FalconShip extends Ship {
 					e.getForceVector().getZ());
 			applyForce(forceVector);
 		}
-		
-		//helpSystems();
 		
 		getModel().draw();
 		glPopMatrix();
