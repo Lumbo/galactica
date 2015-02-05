@@ -48,32 +48,11 @@ public class Ship extends BaseEntity {
 		float rotationFactor = (float)((rotationSpeed)/(Math.log(mass)*7));
 		rotationSpeed -= rotationFactor;
 		rotate((float)(rotationSpeed), 0, 1, 0);
-//		System.out.println("Angle: " + getRotationAngle()
-//				+ " x: " + getRotateX()
-//				+ " y: " + getRotateY()
-//				+ " z: " + getRotateZ());
-//		
-//		System.out.println("Angle: " + getRotationAngle() 
-//				+ " anglex: " + getAngleVector().getX()
-//				+ " angley: " + getAngleVector().getY()
-//				+ " anglez: " + getAngleVector().getZ()
-//				+ " x: " + getRotateX()
-//				+ " y: " + getRotateY()
-//				+ " z: " + getRotateZ());
-		
 	}
-	
-	public void applyTiltStabilizer(){
 		
-	}
-	
 	public void turnDegrees(float angle){		
 		rotationSpeed += angle;
 		rotate(rotationSpeed, 0, 1, 0);
-	}
-	
-	public void tiltLeftRight(float angle){
-		
 	}
 	
 	public void tiltUpDown(float angle){

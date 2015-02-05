@@ -236,7 +236,6 @@ public class Renderer {
 			// Pull controller input
 			pullController();
 			
-			
 			// Camera update
 			cam.useView();
 			
@@ -252,7 +251,7 @@ public class Renderer {
 			}
 			
 			ship.applyRotationReducer();
-			ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
+			//ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
 			
 			// Spin the light around the ship
@@ -264,7 +263,6 @@ public class Renderer {
 				System.exit(0);
 			}
 			
-			GL11.glEnd();
 			GL11.glPopMatrix();
 			
 			Display.update();
@@ -275,6 +273,7 @@ public class Renderer {
 			}
 		}
 		Display.destroy();
+		System.exit(0);
 	}
 
 	
