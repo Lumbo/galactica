@@ -2,6 +2,12 @@ package entity;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import util.Quat4f;
@@ -15,6 +21,8 @@ public class BaseEntity {
 	private float rotationAngle = 1;
 	private Model model;
 	private Quat4f quat4f = new Quat4f();
+	public Matrix4f viewMatrix = new Matrix4f();
+	
 	
 	public BaseEntity(Model m){
 		this.model = m;
@@ -37,22 +45,32 @@ public class BaseEntity {
 	public void rotate(float angle, float x, float y, float z){
 		
 		quat4f = new Quat4f(angle, x, y, z);
+		float[][] rotMat = quat4f.derp(angle, new Vector3f(x, y, z));
+		
+		viewMatrix.setIdentity();
+		
+		viewMatrix.m00 = rotMat[0][0];
+		viewMatrix.m01 = rotMat[0][1];
+		viewMatrix.m02 = rotMat[0][2];
+		
+		viewMatrix.m10 = rotMat[1][0];
+		viewMatrix.m11 = rotMat[1][1];
+		viewMatrix.m12 = rotMat[1][2];
+		
+		viewMatrix.m20 = rotMat[2][0];
+		viewMatrix.m21 = rotMat[2][1];
+		viewMatrix.m22 = rotMat[2][2];
+		
+		System.out.println("[" + rotMat[0][0] + ", " + rotMat[0][1] + ", " + rotMat[0][2] + ", " + viewMatrix.m03 + "]");
+		System.out.println("[" + rotMat[1][0] + ", " + rotMat[1][1] + ", " + rotMat[1][2] + ", " + viewMatrix.m13 + "]");
+		System.out.println("[" + rotMat[2][0] + ", " + rotMat[2][1] + ", " + rotMat[2][2] + ", " + viewMatrix.m23 + "]");
+		System.out.println("[" + viewMatrix.m30 + ", " + viewMatrix.m31 + ", " + viewMatrix.m32 + ", " + viewMatrix.m33 + "]\n");
 		
 		
 		
-		//		rotateX(x);
-//		rotateY(y);
-//		rotateZ(z);
-//		setRotationAngle(angle);
-//		if(x!=0){
-//			rx = angle;
-//		}
-//		else if(y!=0){
-//			ry = angle;
-//		}
-//		else if(z!=0){
-//			rz = angle;
-//		}
+		
+//		rotateY(tempx * rotMat[1][0] + tempy * rotMat[1][1] + tempz * rotMat[1][2]);
+//		rotateZ(tempx * rotMat[2][0] + tempy * rotMat[2][1] + tempz * rotMat[2][2]);
 		
 	}
 	
@@ -92,11 +110,10 @@ public class BaseEntity {
 	
 	public void draw(){
 		glPushMatrix();
-		org.lwjgl.opengl.GL11.
-		glTranslatef(position_x, position_y, position_z);
+		
+		org.lwjgl.opengl.GL11.glTranslatef(position_x, position_y, position_z);
 		//glRotatef(rotationAngle, rotation_x, rotation_y, rotation_z);
-		glRotatef(quat4f.getW(), quat4f.getX(), quat4f.getY(), quat4f.getZ());
-		glScalef(scale, scale, scale);
+		//glScalef(scale, scale, scale);
 		this.model.draw();
 		glPopMatrix();
 	}
@@ -140,4 +157,38 @@ public class BaseEntity {
 	public Vector3f getPosition(){
 		return new Vector3f(position_x, position_y, position_z);
 	}
+	
+	private FloatBuffer createFloatBuffer(int size) {
+		// Java has not sizeof operator so you are
+		// forced to hardcode 4 as the size of a float
+		ByteBuffer bb = ByteBuffer.allocateDirect(size * 4);
+		bb.order(ByteOrder.nativeOrder());
+		FloatBuffer fb = bb.asFloatBuffer();
+
+		return fb;
+	}
+
+	private FloatBuffer createFloatBuffer(float[] arr) {
+		FloatBuffer fb = createFloatBuffer(arr.length);
+		fillFloatBuffer(fb, arr);
+
+		return fb;
+	}
+
+	private FloatBuffer fillFloatBuffer(FloatBuffer fb, float[] arr) {
+		// This is so stupid and unintuitive but you have to reset the
+		// buffer internal "pointer" after filling it with data.
+		fb.put(arr);
+		fb.position(0);
+
+		return fb;
+	}
+	
+	public void useView() {
+		FloatBuffer fb = createFloatBuffer(16);
+		viewMatrix.store(fb);
+		fb.position(0); // Annoying
+		GL11.glLoadMatrix(fb);
+	}
+	
 }

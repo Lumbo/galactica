@@ -17,7 +17,7 @@ import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 
 public class Camera {
-	private Matrix4f viewMatrix = new Matrix4f();
+	public Matrix4f viewMatrix = new Matrix4f();
 
 	//XXX: Replace below fields with a perspective matrix?
 	private float fov;

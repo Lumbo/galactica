@@ -73,15 +73,20 @@ public class Ship extends BaseEntity {
 	
 	public void turnDegrees(float angle){
 		
+		rotationSpeed += angle / 10;
+		rotate(rotationSpeed, 0, 1, 0);
 		
-		
-		rotationSpeed += angle;
-		rotate(rotationSpeed, getRotateX(), angle, getRotateZ());
+		System.out.println("x " + getRotateX());
+		System.out.println("y " + getRotateY());
+		System.out.println("z " + getRotateZ());
 	}
 	
 	public void tiltUpDown(float angle){
 		rotationSpeed += angle;
-		rotate((float)angle, 0, 0, -1);
+		rotate((float)rotationSpeed, 0, 0, -1);
+		System.out.println("x " + getRotateX());
+		System.out.println("y " + getRotateY());
+		System.out.println("z " + getRotateZ());
 		
 	}
 	

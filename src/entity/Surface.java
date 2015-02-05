@@ -1,11 +1,19 @@
 package entity;
 
+import graphics.Model;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-public class Surface {
+public class Surface extends BaseEntity {
+	public Surface(Model m) {
+		super(m);
+		// TODO Auto-generated constructor stub
+	}
+
+
 	private List<Quad> quadList = new ArrayList<Quad>();
 	
 	

@@ -72,7 +72,7 @@ public class Quat4f {
 		return totalRotation;
 	}
 	
-	public void generateRotationMatrix(){
+	private float[][] getRotationMatrix(){
 		rotationMatrix[0][0] = 1 - 2*y*y - 2*z*z;
 		rotationMatrix[1][0] = 2*x*y - 2*w*z;
 		rotationMatrix[2][0] = 2*x*z + 2*w*y;
@@ -93,7 +93,21 @@ public class Quat4f {
 		rotationMatrix[2][3] = 0;
 		rotationMatrix[3][3] = 1;
 		
+		return rotationMatrix;
+		
 	}
+	
+	public float[][] derp(float angle, Vector3f vec){
+		
+		setW((float) Math.cos(angle/2));
+		setX((float) (vec.getX()*Math.sin(angle/2)));
+		setY((float) (vec.getY()*Math.sin(angle/2)));
+		setZ((float) (vec.getZ()*Math.sin(angle/2)));
+		
+		return getRotationMatrix();
+		
+	}
+	
 	
 	
 	public void setX(float x){

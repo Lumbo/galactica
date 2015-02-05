@@ -63,7 +63,7 @@ public class Model {
 		
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		
 	}
 	
 	private static float[] asFloats(Vector3f v){

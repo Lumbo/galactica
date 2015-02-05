@@ -80,10 +80,10 @@ public class Controller {
 			}
 			
 		    if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)){
-				gameWorld.getPlayer().getCurrentShip().turnDegrees(-0.01f);
+				gameWorld.getPlayer().getCurrentShip().turnDegrees(-1f);
 			}
 			else if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
-				gameWorld.getPlayer().getCurrentShip().turnDegrees(0.01f);
+				gameWorld.getPlayer().getCurrentShip().turnDegrees(1f);
 			}
 		}
 	}

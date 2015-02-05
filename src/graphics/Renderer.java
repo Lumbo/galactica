@@ -27,6 +27,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +39,9 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.GLUtils;
 import org.newdawn.slick.opengl.Texture;
@@ -81,6 +85,48 @@ public class Renderer {
 		getFpsDelta();
 		lastFPS = getTime();
 		draw();
+	}
+	
+	
+	// The below function is a huge reason why Java is shit compared to C.
+	// All this stuff is needed simply to create a simple buffer of floats
+	// which is needed to convert the matrix data stored in the Matrix4f
+	// class. Compare this with C where this would all be replaced with
+	// a single float[16].
+	//
+	// XXX: This should probably be placed as a helper function in some
+	//      other package.
+	private FloatBuffer createFloatBuffer(int size) {
+		// Java has not sizeof operator so you are
+		// forced to hardcode 4 as the size of a float
+		ByteBuffer bb = ByteBuffer.allocateDirect(size * 4);
+		bb.order(ByteOrder.nativeOrder());
+		FloatBuffer fb = bb.asFloatBuffer();
+
+		return fb;
+	}
+
+	private FloatBuffer createFloatBuffer(float[] arr) {
+		FloatBuffer fb = createFloatBuffer(arr.length);
+		fillFloatBuffer(fb, arr);
+
+		return fb;
+	}
+
+	private FloatBuffer fillFloatBuffer(FloatBuffer fb, float[] arr) {
+		// This is so stupid and unintuitive but you have to reset the
+		// buffer internal "pointer" after filling it with data.
+		fb.put(arr);
+		fb.position(0);
+
+		return fb;
+	}
+	
+	public void useView(Matrix4f mat) {
+		FloatBuffer fb = createFloatBuffer(16);
+		mat.store(fb);
+		fb.position(0); // Annoying
+		GL11.glLoadMatrix(fb);
 	}
 	
 	public void draw(){
@@ -216,10 +262,15 @@ public class Renderer {
 			pullController();
 			
 			
-			// Camera update
-			cam.useView();
+			Matrix4f res = new Matrix4f();
 			
 			lightRotation += lightRotationSpeed;
+	
+			Matrix4f hej = new Matrix4f();
+				hej.setIdentity();
+			// Camera update
+			Matrix4f.mul(cam.viewMatrix, hej, res);
+			useView(res);
 			
 			for(int i=0; i<1; i++){
 				glPushMatrix();
@@ -230,10 +281,15 @@ public class Renderer {
 				glPopMatrix();
 			}
 			
-			ship.applyRotationReducer();
+//			ship.applyRotationReducer();
 
+			// Camera update
+			Matrix4f.mul(cam.viewMatrix, ship.viewMatrix, res);
+			useView(res);
+			
 			//ship.applyForce(new Vector3f(0, Physics.getGravity(), 0));
 			ship.draw();
+			
 			
 			// Print the plane-axis for the ship
 			ship.printDebugVectors();

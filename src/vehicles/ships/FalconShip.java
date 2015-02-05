@@ -56,8 +56,6 @@ public class FalconShip extends Ship {
 	
 	@Override
 	public void draw() {
-		extraDraw();
-		//applyForce(new Vector3f(0, Physics.getGravity(), 0));
 		for(int i=0; i<getEngines().size(); i++){
 			if(i==0){
 				getEngines().get(i).moveTo(getPositionX()+13, getPositionY()+5, getPositionZ()-4.6f);
@@ -75,8 +73,8 @@ public class FalconShip extends Ship {
 		}
 		glPushMatrix();
 		glTranslatef(getPositionX(), getPositionY(), getPositionZ());
-		glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
-		glScalef(2, 2, 2);
+		//glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
+		//glScalef(2, 2, 2);
 
 		Vector3f forceVector;
 		for(Engine e : getEngines()){
@@ -87,18 +85,10 @@ public class FalconShip extends Ship {
 			applyForce(forceVector);
 		}
 		
-		helpSystems();
+		//helpSystems();
 		
 		getModel().draw();
 		glPopMatrix();
 	}
 	
-	public void extraDraw(){
-		glPushMatrix();
-		GL11.glRotatef(getRotateX(), 1, 0, 0);
-		GL11.glRotatef(getRotateY(), 0, 1, 0);
-		GL11.glRotatef(getRotateZ(), 0, 0, 1);
-		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
-		glPopMatrix();
-	}
 }
