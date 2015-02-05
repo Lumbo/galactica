@@ -1,11 +1,15 @@
 package vehicles.ships;
 
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
@@ -20,6 +24,7 @@ public class FalconShip extends Ship {
 	
 	private double mass = 2000000; // in kilograms
 	private double fuel = 1000;
+	private float rx = 0, ry = 0, rz = 0;
 	
 	public FalconShip(Model m) throws FileNotFoundException, IOException{
 		super(m);
@@ -30,12 +35,13 @@ public class FalconShip extends Ship {
 			if(i == 1 || i == 3){
 				engine.rotate(180, 0, 1, 0);
 			}
+
 			engine.setThrottle(0);
 			engineList.add(engine);
-			
 		}
 		addEngines(engineList);
 		setMass(mass);
+		
 	}
 	
 	public void setFuel(double fuel){
@@ -52,6 +58,8 @@ public class FalconShip extends Ship {
 	
 	@Override
 	public void draw() {
+		extraDraw();
+		//applyForce(new Vector3f(0, Physics.getGravity(), 0));
 		for(int i=0; i<getEngines().size(); i++){
 			if(i==0){
 				getEngines().get(i).moveTo(getPositionX()+13, getPositionY()+5, getPositionZ()-4.6f);
@@ -67,10 +75,10 @@ public class FalconShip extends Ship {
 			}
 			getEngines().get(i).draw();
 		}
-		GL11.glPushMatrix();
-		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
-		GL11.glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
-		GL11.glScalef(2, 2, 2);
+		glPushMatrix();
+		glTranslatef(getPositionX(), getPositionY(), getPositionZ());
+		glRotatef(getRotationAngle(), getRotateX(), getRotateY(), getRotateZ());
+		glScalef(2, 2, 2);
 
 		Vector3f forceVector;
 		for(Engine e : getEngines()){
@@ -80,7 +88,19 @@ public class FalconShip extends Ship {
 					e.getForceVector().getZ());
 			applyForce(forceVector);
 		}
+		
+		helpSystems();
+		
 		getModel().draw();
-		GL11.glPopMatrix();
+		glPopMatrix();
+	}
+	
+	public void extraDraw(){
+		glPushMatrix();
+		GL11.glRotatef(getRotateX(), 1, 0, 0);
+		GL11.glRotatef(getRotateY(), 0, 1, 0);
+		GL11.glRotatef(getRotateZ(), 0, 0, 1);
+		GL11.glTranslatef(getPositionX(), getPositionY(), getPositionZ());
+		glPopMatrix();
 	}
 }
