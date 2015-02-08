@@ -22,6 +22,7 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +50,7 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 import physics.Physics;
+import util.Quat4f;
 import vehicles.ships.FalconShip;
 import world.GameWorld;
 import controller.Camera;
@@ -130,6 +132,8 @@ public class Renderer {
 		fb.position(0); // Annoying
 		GL11.glLoadMatrix(fb);
 	}
+	
+
 	
 	public void draw(){
 		try{
@@ -258,11 +262,12 @@ public class Renderer {
 			
 			
 			Matrix4f res = new Matrix4f();
-			
+			Quat4f quat = new Quat4f();
 
 	
 			// Surface update
-			Matrix4f.mul(cam.viewMatrix, surface.getViewMatrix(), res);
+			//Matrix4f.mul(cam.viewMatrix, surface.getViewMatrix(), res);
+			quat = Quat4f.getMultiplication(cam.getQuaternion(), surface.getQuaternion());
 			useView(res);
 			surface.draw();
 			

@@ -67,10 +67,10 @@ public class BaseEntity {
 		System.out.println("[" + rotMat[1][0] + ", " + rotMat[1][1] + ", " + rotMat[1][2] + ", " + viewMatrix.m13 + "]");
 		System.out.println("[" + rotMat[2][0] + ", " + rotMat[2][1] + ", " + rotMat[2][2] + ", " + viewMatrix.m23 + "]");
 		System.out.println("[" + viewMatrix.m30 + ", " + viewMatrix.m31 + ", " + viewMatrix.m32 + ", " + viewMatrix.m33 + "]\n");
-		
-		rotateX(quat4f.getX());
-		rotateY(quat4f.getY());
-		rotateZ(quat4f.getZ());
+	}
+	
+	public Quat4f getQuaternion(){
+		return quat4f;
 	}
 	
 	public void rotateX(float r){

@@ -16,6 +16,8 @@ import org.lwjgl.util.vector.Vector4f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 
+import util.Quat4f;
+
 public class Camera {
 	public Matrix4f viewMatrix = new Matrix4f();
 
@@ -109,6 +111,16 @@ public class Camera {
 		viewMatrix.store(fb);
 		fb.position(0); // Annoying
 		GL11.glLoadMatrix(fb);
+	}
+	
+	public Quat4f getQuaternion(){
+		float w = (float)(Math.sqrt(1.0 + viewMatrix.m00 + viewMatrix.m11 + viewMatrix.m22) / 2.0);
+		float w4 = (float) (4.0 * w);
+		float x = (float) (viewMatrix.m21 - viewMatrix.m12) / w4;
+		float y = (float) (viewMatrix.m02 - viewMatrix.m20) / w4;
+		float z = (float) (viewMatrix.m10 - viewMatrix.m01) / w4;
+		
+		return new Quat4f(w, x, y, z);
 	}
 	
 	public void moveX(float amt) { viewMatrix.m30 += amt; }

@@ -50,7 +50,7 @@ public class Quat4f {
 	}
 	
 	
-	public Quat4f getMultiplication(Quat4f q1, Quat4f q2){
+	public static Quat4f getMultiplication(Quat4f q1, Quat4f q2){
 		Quat4f resultQuat = new Quat4f();
 		resultQuat.setW(q1.getW()*q2.getW() - q1.getX()*q2.getX() - q1.getY()*q2.getY() - q1.getZ()*q2.getZ());
 		resultQuat.setX(q1.getW()*q2.getX() + q1.getX()*q2.getW() + q1.getY()*q2.getZ() - q1.getZ()*q2.getY());
